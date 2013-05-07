@@ -4,3 +4,22 @@
 *.jar
 *.war
 *.ear
+
+#eclipse
+bin
+.settings
+.settings
+.metadata
+.project
+.classpath
+bin
+build
+
+#Latex
+*.aux
+*.log
+*.toc
+
+# Windows
+thumbs.db
+Thumbs.db
