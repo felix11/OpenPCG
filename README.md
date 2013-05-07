@@ -1,4 +1,4 @@
 OpenPCG
 =======
 
-Open source procedural generation project.
+And open source project for procedural content generation.

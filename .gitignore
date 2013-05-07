@@ -12,7 +12,6 @@ bin
 .metadata
 .project
 .classpath
-bin
 build
 
 #Latex
