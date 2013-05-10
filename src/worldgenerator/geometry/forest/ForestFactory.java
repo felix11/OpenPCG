@@ -3,9 +3,7 @@
  */
 package worldgenerator.geometry.forest;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -15,7 +13,6 @@ import worldgenerator.util.grid.CellularAutomata.CAStep;
 import worldgenerator.util.grid.Grid2D;
 import worldgenerator.util.grid.Grid2D.Grid2DIterator;
 import worldgenerator.util.grid.GridCell;
-import worldgenerator.util.grid.GridCellDouble;
 import worldgenerator.util.grid.GridFactory;
 import worldgenerator.util.grid.GridFactory.GridAttributes;
 import worldgenerator.util.grid.GridType;
@@ -138,7 +135,7 @@ public class ForestFactory
 								int dir = rand.nextInt(4);
 								int newrow = row + dirs [dir][0];
 								int newcol = col + dirs[dir][1];
-								if(heightmap.getDataAt(newrow, newcol).getData() > 0)
+								if(!heightmap.invalid(newrow, newcol) && heightmap.getDataAt(newrow, newcol).getData() > 0)
 								{
 									localgrid.setDataAt(newrow, newcol, gridCell.getData());
 								}

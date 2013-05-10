@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import worldgenerator.geometry.Point3D;
 import worldgenerator.geometry.WorldObject;
 import worldgenerator.util.grid.GridCell;
 
@@ -25,22 +26,6 @@ public class City extends WorldObject
 	public GridCell<Double> getHeight()
 	{
 		return height;
-	}
-
-	/**
-	 * @return the row
-	 */
-	public int getRow()
-	{
-		return row;
-	}
-
-	/**
-	 * @return the col
-	 */
-	public int getCol()
-	{
-		return col;
 	}
 
 	/**
@@ -73,8 +58,7 @@ public class City extends WorldObject
 	}
 
 	private final GridCell<Double> height;
-	private final int row;
-	private final int col;
+	private final Point3D position;
 	private final GridCell<Integer> ID;
 	private final String name;
 	private final Map<City, CityLink> links;
@@ -85,8 +69,7 @@ public class City extends WorldObject
 	{
 		this.ID = ID;
 		this.name = "";
-		this.row = row;
-		this.col = col;
+		this.position = new Point3D(col,row,height.getData());
 		this.height = height;
 		this.links = new HashMap<City, CityLink>();
 		this.soilQuality = 0.0;
@@ -117,5 +100,10 @@ public class City extends WorldObject
 	public void setPopulationSize(int population)
 	{
 		this.population = population;
+	}
+
+	public Point3D getPosition()
+	{
+		return this.position;
 	}
 }

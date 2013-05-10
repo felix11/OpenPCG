@@ -25,7 +25,7 @@ mapc = mapc + mapv;
 
 figure(1)
 maph = (maph)*1;
-%maph(mapc >= 0) = max(max(maph));
+maph(mapc >= 0) = max(max(maph));
 %map = imread('real_island1.tif');
 %map = imread('canyon_1.tif');
 %map = imread('real_island2.tif');
@@ -35,7 +35,8 @@ maph = (maph)*1;
 % plot heightmap first
 imagesc(maph)
 zlimits = [min(maph(:)) max(maph(:))];
-demcmap(zlimits,64);
+demcmap(zlimits,255);
+%colormap(gray)
 shading interp
 axis image
 axis off

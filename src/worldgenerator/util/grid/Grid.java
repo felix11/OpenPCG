@@ -12,7 +12,7 @@ public abstract class Grid<T extends Comparable<T>> {
 	public abstract void fill(GridCell<T> template);
 	
 	@Override
-	protected abstract Grid2D<T> clone();
+	protected abstract Grid<T> clone();
 
 	public GridCell<T> getMaximum()
 	{

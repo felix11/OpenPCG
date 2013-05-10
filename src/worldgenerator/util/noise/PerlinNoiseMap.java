@@ -70,10 +70,10 @@ public class PerlinNoiseMap {
 				
 				u = i
 						+ (int) (Perlin.Noise(f * i / (float) Size, f * j
-								/ (float) Size, 0) * d * (s * variance));
+								/ (float) Size, 0) * d * (s * variance+0.1f));
 				v = j
 						+ (int) (Perlin.Noise(f * i / (float) Size, f * j
-								/ (float) Size, 1) * d * (s * variance));
+								/ (float) Size, 1) * d * (s * variance+0.1f));
 				if (u < 0)
 					u = 0;
 				if (u >= Size)
@@ -157,7 +157,7 @@ public class PerlinNoiseMap {
 				}
 
 				if (0 < d_max && d_max <= (smoothness / (float) Size)) {
-					double d_h = 0.5f * d_max * (variance*s);
+					double d_h = 0.5f * d_max * (variance*s+0.1f);
 					Heights[i][j] -= d_h;
 					Heights[i + match[0]][j + match[1]] += d_h;
 				}

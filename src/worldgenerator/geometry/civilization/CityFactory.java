@@ -11,6 +11,7 @@ import worldgenerator.geometry.terrain.Terrain;
 import worldgenerator.util.grid.Grid2D;
 import worldgenerator.util.grid.GridCellInteger;
 import worldgenerator.util.grid.GridFactory.GridAttributes;
+import worldgenerator.util.grid.GridUtils;
 import worldgenerator.util.noise.RandomSource;
 
 /**
@@ -49,7 +50,7 @@ public class CityFactory
 	
 	public static Collection<City> create(Terrain terrain, CityAttributes attributes)
 	{
-		Grid2D<Double> heightmap = terrain.getHeightMap();
+		Grid2D<Double> heightmap = terrain.getHeightMap(0);
 		Grid2D<Double> soilQuality = terrain.getSoilQualityMap();
 		Collection<City> cities = new LinkedList<City>();
 		
@@ -75,10 +76,10 @@ public class CityFactory
 		// link cities
 		for(City c1 : cities)
 		{
-			Point3D c1pos = new Point3D(c1.getCol(), c1.getRow(), c1.getHeight().getData());
+			Point3D c1pos = c1.getPosition();
 			for(City c2 : cities)
 			{
-				Point3D c2pos = new Point3D(c2.getCol(), c2.getRow(), c2.getHeight().getData());
+				Point3D c2pos = c2.getPosition();
 				double dist = c1pos.distTo(c2pos);
 				
 				c1.addLink(c2, dist);
@@ -133,8 +134,25 @@ public class CityFactory
 		
 		for(City city : cities)
 		{
-			result.setDataAt(city.getRow(), city.getCol(), city.getPopulation());
+			result.setDataAt((int)city.getPosition().y, (int)city.getPosition().x, city.getPopulation());
 		}
+		
+		return result;
+	}
+
+	/**
+	 * Create a 2D grid storing the population density imposed by the given cities.
+	 * @param cities
+	 * @param attributes
+	 * @return
+	 */
+	public static Grid2D<Double> createPopulationDensityGrid(Collection<City> cities, GridAttributes attributes)
+	{
+		if(attributes.factor <= 0)
+			throw new IllegalArgumentException("CityAttributes.density must set the kernel size and must thus be > 0.");
+		
+		Grid2D<Double> result = GridUtils.int2double(createGrid(cities, attributes));
+		GridUtils.ApplyGaussianFilter(result, (int)attributes.factor);
 		
 		return result;
 	}

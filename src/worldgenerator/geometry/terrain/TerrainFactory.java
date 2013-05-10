@@ -2,13 +2,10 @@ package worldgenerator.geometry.terrain;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 import worldgenerator.geometry.forest.ForestFactory;
 import worldgenerator.geometry.forest.ForestFactory.ForestAttributes;
-import worldgenerator.geometry.forest.ForestFactory.ForestLevels;
-import worldgenerator.geometry.resource.Resource;
 import worldgenerator.geometry.resource.Resources;
 import worldgenerator.geometry.river.River;
 import worldgenerator.geometry.river.RiverFactory;
@@ -47,6 +44,12 @@ public class TerrainFactory
 		// forests
 		Map<Integer, Grid2D<Double>> forests = ForestFactory.create(heightmap, soilQuality, forestAttributes);
 		
-		return new Terrain(heightmap, resources, watersheds, rivers, soilQuality, forests);
+		// create untesselated terrain
+		Terrain result = new Terrain(heightmap, resources, watersheds, rivers, soilQuality, forests);
+		
+		// tesselate for greater detail
+		result.tesselate(3, defaultAttributes.seed);
+		
+		return result;
 	}
 }

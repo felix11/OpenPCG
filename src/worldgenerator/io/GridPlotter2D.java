@@ -3,17 +3,13 @@
  */
 package worldgenerator.io;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import worldgenerator.util.grid.Grid2D;
 import worldgenerator.util.grid.GridCell;
-import worldgenerator.util.grid.GridCellDouble;
-import worldgenerator.util.visualization.IOUtils;
 
 /**
  * @author Felix Dietrich

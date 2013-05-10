@@ -8,6 +8,7 @@ filewaters = 'test_watershedmap.txt';
 filesoil = 'test_soilmap.txt';
 filecities = 'test_citymap.txt';
 filevillages = 'test_villagemap.txt';
+filepopulationdensity = 'test_populationdensitymap.txt';
 fileforest1 = 'test_forestmap1.txt';
 
 maph = readmap(path, fileheight);
@@ -16,16 +17,25 @@ mapw = readmap(path, filewaters);
 maps = readmap(path, filesoil);
 mapc = readmap(path, filecities);
 mapv = readmap(path, filevillages);
+mappd = readmap(path, filepopulationdensity);
 mapf1 = readmap(path, fileforest1);
 
-convert2tga(maph,[path 'test_heightmap.bmp']);
+%convert2tga(maph,[path 'test_heightmap.bmp']);
 
 % combine villages and cities in one map
 mapc = mapc + mapv;
+mapc(mapc > 0) = 1;
+mapc(mapc < 1) = 0;
+
+% scale forest, resources and cities maps to the same dimensions as the hm
+s = size(maph);
+mapr = imresize(mapr,s);
+mapc = imresize(mapc,s,'nearest');
+mapf1 = imresize(mapf1,s);
 
 figure(1)
 maph = (maph)*1;
-maph(mapc >= 0) = max(max(maph));
+maph(mapc > 0) = max(max(maph));
 %map = imread('real_island1.tif');
 %map = imread('canyon_1.tif');
 %map = imread('real_island2.tif');
@@ -35,7 +45,8 @@ maph(mapc >= 0) = max(max(maph));
 % plot heightmap first
 imagesc(maph)
 zlimits = [min(maph(:)) max(maph(:))];
-demcmap(zlimits,64);
+demcmap(zlimits,255);
+%colormap(gray)
 shading interp
 axis image
 axis off
@@ -69,7 +80,7 @@ hold on
 hold off
 
 figure(2)
-imagesc(mapc)
+imagesc(mappd)
 shading interp
 axis image
 colorbar

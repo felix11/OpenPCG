@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.awt.Canvas;
 import java.awt.CardLayout;
@@ -82,6 +83,7 @@ public class MainGUI extends JFrame
 	private Grid2D<Integer> cityGrid;
 	private Collection<City> villages;
 	private Grid2D<Integer> villageGrid;
+	private Grid2D<Double> populationDensityGrid;
 
 	private ActionListener generateTerrainActionListener = new ActionListener() {
 
@@ -100,7 +102,7 @@ public class MainGUI extends JFrame
 				GridAttributes attributes = new GridAttributes(height, width, seed);
 
 				Map<Integer, ForestLevels> forestLevels = new HashMap<Integer, ForestLevels>();
-				forestLevels.put(1, new ForestLevels(0.0, 0.5, 0.25));
+				forestLevels.put(1, new ForestLevels(0.1, 0.5, 0.75));
 				
 				double forestDensity = 0.1;
 				
@@ -125,6 +127,14 @@ public class MainGUI extends JFrame
 				cAttributes = new CityAttributes(cityDensity, minPop, maxPop, idealDistance, seed);
 				villages = CityFactory.create(terrain, cAttributes);
 				villageGrid = CityFactory.createGrid(villages, attributes);
+
+				// create population density map
+				int kernel_size = 10; // size of the kernel with which the population density map is created
+				GridAttributes pAttributes = new GridAttributes(height, width, seed, kernel_size);
+				Collection<City> population = new LinkedList<City>();
+				population.addAll(cities);
+				population.addAll(villages);
+				populationDensityGrid = CityFactory.createPopulationDensityGrid(population, pAttributes);
 				
 				updateTabs();
 			}
@@ -140,14 +150,17 @@ public class MainGUI extends JFrame
 			return;
 		}
 		
-		int width = terrain.getHeightMap().cols();
-		int height = terrain.getHeightMap().rows();
+		int width = terrain.getHeightMap(0).cols();
+		int height = terrain.getHeightMap(0).rows();
 
 		// plot heightmap
 		try
 		{
-			GridPlotter2D plotter = new GridPlotter2D(terrain.getHeightMap());
-			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			int level = 3;
+			int width2 = terrain.getHeightMap(level).cols();
+			int height2 = terrain.getHeightMap(level).rows();
+			GridPlotter2D plotter = new GridPlotter2D(terrain.getHeightMap(level));
+			BufferedImage image = new BufferedImage(width2, height2, BufferedImage.TYPE_INT_ARGB);
 			plotter.plot2image(image);
 			plotter.plot2file("test_heightmap.txt");
 			heightImageLabel.setIcon(new ImageIcon(image));
@@ -215,6 +228,19 @@ public class MainGUI extends JFrame
 			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			plotter.plot2image(image);
 			plotter.plot2file("test_villagemap.txt");
+			resourcesImageLabel.setIcon(new ImageIcon(image));
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		// plot population density map
+		try
+		{
+			GridPlotter2D plotter = new GridPlotter2D(populationDensityGrid);
+			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			plotter.plot2image(image);
+			plotter.plot2file("test_populationdensitymap.txt");
 			resourcesImageLabel.setIcon(new ImageIcon(image));
 		} catch (IOException e)
 		{

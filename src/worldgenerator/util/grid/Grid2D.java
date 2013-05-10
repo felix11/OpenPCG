@@ -24,7 +24,8 @@ public class Grid2D<T extends Comparable<T>> extends Grid<T> {
 		public void step(int row, int col, GridCell<C> gridCell, Grid2D<C> grid2d);
 	}
 
-	private GridCell<T>[][] data;
+	protected GridCell<T>[][] data;
+	protected GridCell<T> fillTemplate;
 
 	@SuppressWarnings("unchecked")
 	public Grid2D(int height, int width, GridCell<T> fillTemplate) {
@@ -35,6 +36,8 @@ public class Grid2D<T extends Comparable<T>> extends Grid<T> {
 		
 		maximum = null;
 		minimum = null;
+		
+		this.fillTemplate = fillTemplate;
 		
 		// generate empty grid
 		data = (GridCell<T>[][]) Array.newInstance(fillTemplate.getClass(), height, width);
@@ -209,6 +212,17 @@ public class Grid2D<T extends Comparable<T>> extends Grid<T> {
 			for(int c=0; c<cols(); c++)
 			{
 				this.setDataAt(r,c,getDataAt(r, c).add(cell));
+			}
+		}
+	}
+
+	public void add(Grid2D<T> grid)
+	{
+		for(int r=0; r<rows(); r++)
+		{
+			for(int c=0; c<cols(); c++)
+			{
+				this.setDataAt(r,c,getDataAt(r, c).add(grid.getDataAt(r, c)));
 			}
 		}
 	}
