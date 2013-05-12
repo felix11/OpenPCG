@@ -1,12 +1,11 @@
 package worldgenerator.test.io;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import worldgenerator.io.GridPlotter2D;
-import worldgenerator.util.grid.Grid;
 import worldgenerator.util.grid.Grid2D;
 import worldgenerator.util.grid.GridCellDouble;
 

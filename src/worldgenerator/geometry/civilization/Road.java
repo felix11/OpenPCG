@@ -3,10 +3,11 @@
  */
 package worldgenerator.geometry.civilization;
 
+import geometry.Point3D;
+
 import java.util.LinkedList;
 import java.util.Random;
 
-import worldgenerator.geometry.Point3D;
 import worldgenerator.util.factory.WorldObject;
 
 /**

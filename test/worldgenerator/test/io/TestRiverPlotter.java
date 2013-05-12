@@ -1,17 +1,15 @@
 package worldgenerator.test.io;
 
-import static org.junit.Assert.*;
+import geometry.Point3D;
 
 import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import worldgenerator.geometry.Point3D;
 import worldgenerator.geometry.river.GridCellRiverVertex;
 import worldgenerator.geometry.river.River;
 import worldgenerator.geometry.river.RiverFactory;
-import worldgenerator.io.GridPlotter2D;
 import worldgenerator.io.RiverPlotter;
 
 public class TestRiverPlotter {

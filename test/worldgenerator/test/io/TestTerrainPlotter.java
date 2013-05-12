@@ -1,7 +1,5 @@
 package worldgenerator.test.io;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,11 +9,8 @@ import org.junit.Test;
 
 import worldgenerator.geometry.forest.ForestFactory.ForestAttributes;
 import worldgenerator.geometry.forest.ForestFactory.ForestLevels;
-import worldgenerator.geometry.river.River;
-import worldgenerator.geometry.river.RiverFactory;
 import worldgenerator.geometry.terrain.Terrain;
 import worldgenerator.geometry.terrain.TerrainFactory;
-import worldgenerator.io.RiverPlotter;
 import worldgenerator.io.TerrainPlotter;
 import worldgenerator.util.grid.GridFactory.GridAttributes;
 

@@ -32,7 +32,7 @@ mapc(mapc < 1) = 0;
 % scale forest, resources and cities maps to the same dimensions as the hm
 s = size(mapheights);
 mapresources = imresize(mapresources,s);
-mapc = imresize(mapc,s,'nearest');
+%mapc = imresize(mapc,s,'nearest');
 mapf1 = imresize(mapf1,s);
 
 figure(1)

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import worldgenerator.geometry.Point3D;
 import worldgenerator.util.factory.WorldObject;
 
 /**

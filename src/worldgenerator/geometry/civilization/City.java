@@ -3,12 +3,11 @@
  */
 package worldgenerator.geometry.civilization;
 
+import geometry.Point3D;
+
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
-import worldgenerator.geometry.Point3D;
 import worldgenerator.util.factory.WorldObject;
 import worldgenerator.util.grid.GridCell;
 

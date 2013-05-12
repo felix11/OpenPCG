@@ -1,8 +1,8 @@
 package worldgenerator.util.noise;
 
-import java.util.Random;
+import geometry.Point3D;
 
-import worldgenerator.geometry.Point3D;
+import java.util.Random;
 
 public class RandomSource {
 	public static final Random rand = new Random();

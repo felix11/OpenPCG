@@ -1,11 +1,12 @@
 package worldgenerator.test.geometry.river;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import geometry.Point3D;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import worldgenerator.geometry.Point3D;
 import worldgenerator.geometry.river.GridCellRiverVertex;
 import worldgenerator.geometry.river.River;
 import worldgenerator.geometry.river.RiverFactory;

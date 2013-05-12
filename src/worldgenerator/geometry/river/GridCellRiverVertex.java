@@ -3,9 +3,10 @@
  */
 package worldgenerator.geometry.river;
 
+import geometry.Point3D;
+
 import java.util.Comparator;
 
-import worldgenerator.geometry.Point3D;
 import worldgenerator.util.grid.GridCell;
 
 /**

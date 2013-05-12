@@ -3,6 +3,10 @@
  */
 package worldgenerator.geometry.civilization;
 
+import geometry.Line;
+import geometry.Point;
+import geometry.Point3D;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -10,15 +14,12 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.TreeSet;
 
-import vadereutils.geometry.Line;
-import vadereutils.geometry.Point;
-import worldgenerator.geometry.Point3D;
 import worldgenerator.util.factory.IWorldObjectFactory;
 import worldgenerator.util.grid.Grid2D;
 import worldgenerator.util.grid.GridCellDouble;
 import worldgenerator.util.grid.GridFactory;
-import worldgenerator.util.grid.GridType;
 import worldgenerator.util.grid.GridFactory.GridAttributes;
+import worldgenerator.util.grid.GridType;
 
 /**
  * @author Felix Dietrich
