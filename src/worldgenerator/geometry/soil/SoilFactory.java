@@ -3,6 +3,7 @@
  */
 package worldgenerator.geometry.soil;
 
+import worldgenerator.util.factory.IWorldObjectFactory;
 import worldgenerator.util.grid.Grid2D;
 import worldgenerator.util.grid.GridFactory;
 import worldgenerator.util.grid.GridType;
@@ -12,7 +13,7 @@ import worldgenerator.util.grid.GridFactory.GridAttributes;
  * @author Felix Dietrich
  *
  */
-public class SoilFactory
+public class SoilFactory implements IWorldObjectFactory
 {
 	/**
 	 * Computes a soil quality map from given height and water data.

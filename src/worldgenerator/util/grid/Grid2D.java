@@ -169,7 +169,7 @@ public class Grid2D<T extends Comparable<T>> extends Grid<T> {
 	}
 
 	@Override
-	protected Grid2D<T> clone()
+	public Grid2D<T> clone()
 	{
 		Grid2D<T> copy = new Grid2D<T>(this.rows(), this.cols(), this.getDataAt(0, 0));
 		for(int r=0; r<rows(); r++)

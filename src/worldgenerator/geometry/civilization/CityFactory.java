@@ -8,7 +8,10 @@ import java.util.LinkedList;
 
 import worldgenerator.geometry.Point3D;
 import worldgenerator.geometry.terrain.Terrain;
+import worldgenerator.util.factory.IWorldObjectFactory;
 import worldgenerator.util.grid.Grid2D;
+import worldgenerator.util.grid.Grid2D.Grid2DIterator;
+import worldgenerator.util.grid.GridCell;
 import worldgenerator.util.grid.GridCellInteger;
 import worldgenerator.util.grid.GridFactory.GridAttributes;
 import worldgenerator.util.grid.GridUtils;
@@ -18,7 +21,7 @@ import worldgenerator.util.noise.RandomSource;
  * @author Felix Dietrich
  *
  */
-public class CityFactory
+public class CityFactory implements IWorldObjectFactory<City>
 {
 	public static class CityAttributes
 	{
@@ -130,7 +133,7 @@ public class CityFactory
 	 */
 	public static Grid2D<Integer> createGrid(Collection<City> cities, GridAttributes attributes)
 	{
-		Grid2D<Integer> result = new Grid2D<Integer>(attributes.height, attributes.width, new GridCellInteger(-1));
+		Grid2D<Integer> result = new Grid2D<Integer>(attributes.height, attributes.width, new GridCellInteger(0));
 		
 		for(City city : cities)
 		{
@@ -142,11 +145,12 @@ public class CityFactory
 
 	/**
 	 * Create a 2D grid storing the population density imposed by the given cities.
+	 * @param heightmap 
 	 * @param cities
 	 * @param attributes
 	 * @return
 	 */
-	public static Grid2D<Double> createPopulationDensityGrid(Collection<City> cities, GridAttributes attributes)
+	public static Grid2D<Double> createPopulationDensityGrid(final Grid2D<Double> heightmap, Collection<City> cities, GridAttributes attributes)
 	{
 		if(attributes.factor <= 0)
 			throw new IllegalArgumentException("CityAttributes.density must set the kernel size and must thus be > 0.");
@@ -154,6 +158,47 @@ public class CityFactory
 		Grid2D<Double> result = GridUtils.int2double(createGrid(cities, attributes));
 		GridUtils.ApplyGaussianFilter(result, (int)attributes.factor);
 		
+		result.iterate(new Grid2DIterator<Double>()
+		{
+			@Override
+			public void step(int row, int col, GridCell<Double> gridCell, Grid2D<Double> grid2d)
+			{
+				if(heightmap.getDataAt(row, col).getData() < 0)
+				{
+					// TODO: add the removed data somewhere else, so that the population count stays the same
+					grid2d.setDataAt(row, col, 0.0);
+				}
+			}
+		});
+		
 		return result;
+	}
+
+	/**
+	 * Links all cities given in the collections together, removing old links already stored in the cities.
+	 * 
+	 * @param cityCollections
+	 */
+	public static void link(Collection<City>... cityCollections)
+	{
+		Collection<City> allcities = new LinkedList<City>();
+		
+		// unify all cities in one array
+		for(Collection<City> cc : cityCollections)
+		{
+			allcities.addAll(cc);
+		}
+		
+		// loop over all cities and link them
+		for(City c1 : allcities)
+		{
+			// remove previous links
+			c1.getLinks().clear();
+			// add new links
+			for(City c2 : allcities)
+			{
+				c1.addLink(c2, c1.getPosition().distTo(c2.getPosition()));
+			}
+		}
 	}
 }

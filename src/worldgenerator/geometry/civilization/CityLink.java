@@ -10,8 +10,8 @@ package worldgenerator.geometry.civilization;
  */
 public class CityLink
 {
-	private final City c1;
-	private final City c2;
+	public final City c1;
+	public final City c2;
 	private double distance = 0.0;
 	
 	/**

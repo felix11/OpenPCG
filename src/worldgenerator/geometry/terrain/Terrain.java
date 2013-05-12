@@ -8,9 +8,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
 
-import worldgenerator.geometry.WorldObject;
 import worldgenerator.geometry.resource.Resources;
 import worldgenerator.geometry.river.River;
+import worldgenerator.util.factory.WorldObject;
 import worldgenerator.util.grid.Grid2D;
 import worldgenerator.util.grid.Grid2D.Grid2DIterator;
 import worldgenerator.util.grid.GridCell;

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import worldgenerator.geometry.Point3D;
+import worldgenerator.util.factory.IWorldObjectFactory;
 import worldgenerator.util.grid.CellularAutomata;
 import worldgenerator.util.grid.CellularAutomata.CAStep;
 import worldgenerator.util.grid.Grid2D;
@@ -18,7 +19,7 @@ import worldgenerator.util.grid.GridType;
 import worldgenerator.util.noise.RandomIntervals;
 import worldgenerator.util.noise.RandomSource;
 
-public class RiverFactory {
+public class RiverFactory implements IWorldObjectFactory<River> {
 	/**
 	 * Creates a river with given source and sink.
 	 * The sparsity defines how many new source rivers are created in the process. 

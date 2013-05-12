@@ -10,13 +10,14 @@ import worldgenerator.geometry.resource.Resources;
 import worldgenerator.geometry.river.River;
 import worldgenerator.geometry.river.RiverFactory;
 import worldgenerator.geometry.soil.SoilFactory;
+import worldgenerator.util.factory.IWorldObjectFactory;
 import worldgenerator.util.grid.Grid2D;
 import worldgenerator.util.grid.GridCellDouble;
 import worldgenerator.util.grid.GridFactory;
 import worldgenerator.util.grid.GridType;
 import worldgenerator.util.grid.GridFactory.GridAttributes;
 
-public class TerrainFactory
+public class TerrainFactory implements IWorldObjectFactory<Terrain>
 {
 	public static Terrain create(GridAttributes defaultAttributes, ForestAttributes forestAttributes)
 	{
@@ -48,7 +49,7 @@ public class TerrainFactory
 		Terrain result = new Terrain(heightmap, resources, watersheds, rivers, soilQuality, forests);
 		
 		// tesselate for greater detail
-		result.tesselate(3, defaultAttributes.seed);
+		//result.tesselate(3, defaultAttributes.seed);
 		
 		return result;
 	}

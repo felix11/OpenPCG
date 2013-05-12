@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import worldgenerator.geometry.Point3D;
-import worldgenerator.geometry.WorldObject;
+import worldgenerator.util.factory.WorldObject;
 import worldgenerator.util.grid.GridCell;
 
 /**

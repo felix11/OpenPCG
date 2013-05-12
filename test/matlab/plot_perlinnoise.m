@@ -8,15 +8,17 @@ filewaters = 'test_watershedmap.txt';
 filesoil = 'test_soilmap.txt';
 filecities = 'test_citymap.txt';
 filevillages = 'test_villagemap.txt';
+fileroads = 'test_roads.txt';
 filepopulationdensity = 'test_populationdensitymap.txt';
 fileforest1 = 'test_forestmap1.txt';
 
-maph = readmap(path, fileheight);
-mapr = readmap(path, fileres);
+mapheights = readmap(path, fileheight);
+mapresources = readmap(path, fileres);
 mapw = readmap(path, filewaters);
 maps = readmap(path, filesoil);
 mapc = readmap(path, filecities);
 mapv = readmap(path, filevillages);
+maproads = readmap(path, fileroads);
 mappd = readmap(path, filepopulationdensity);
 mapf1 = readmap(path, fileforest1);
 
@@ -28,14 +30,14 @@ mapc(mapc > 0) = 1;
 mapc(mapc < 1) = 0;
 
 % scale forest, resources and cities maps to the same dimensions as the hm
-s = size(maph);
-mapr = imresize(mapr,s);
-mapc = imresize(mapc,s,'nearest');
+s = size(mapheights);
+mapresources = imresize(mapresources,s);
+%mapc = imresize(mapc,s,'nearest');
 mapf1 = imresize(mapf1,s);
 
 figure(1)
-maph = (maph)*1;
-maph(mapc > 0) = max(max(maph));
+mapheights = (mapheights)*1;
+mapheights(mapc > 0) = max(max(mapheights));
 %map = imread('real_island1.tif');
 %map = imread('canyon_1.tif');
 %map = imread('real_island2.tif');
@@ -43,8 +45,8 @@ maph(mapc > 0) = max(max(maph));
 %map = map / max(max(map)) * 20000 / 512;
 
 % plot heightmap first
-imagesc(maph)
-zlimits = [min(maph(:)) max(maph(:))];
+imagesc(mapheights)
+zlimits = [min(mapheights(:)) max(mapheights(:))];
 demcmap(zlimits,255);
 %colormap(gray)
 shading interp
@@ -56,7 +58,7 @@ colorbar
 
 % blend resources
 hold on
-contour(mapr*200,10)
+contour(mapresources*200,10)
 %zlimits = [min(mapr(:)) max(mapr(:))];
 %demcmap(zlimits,64);
 shading interp
@@ -80,16 +82,23 @@ hold on
 hold off
 
 figure(2)
+mappd(maproads > 0) = max(max(mappd));
 imagesc(mappd)
 shading interp
 axis image
 colorbar
 
-
 figure(3)
+imagesc(maproads)
+shading interp
+axis image
+colorbar
+
+
+figure(4)
 % plot heightmap first
 %imagesc(maph)
-zlimits = [min(maph(:)) max(maph(:))];
+zlimits = [min(mapheights(:)) max(mapheights(:))];
 %demcmap(zlimits,64);
 %shading interp
 

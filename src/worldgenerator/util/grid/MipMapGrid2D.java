@@ -97,7 +97,7 @@ public class MipMapGrid2D<T extends Comparable<T>> extends Grid2D<T>
 	}
 
 	@Override
-	protected MipMapGrid2D<T> clone()
+	public MipMapGrid2D<T> clone()
 	{
 		MipMapGrid2D<T> result = new MipMapGrid2D<T>(this.rows(), this.cols(), fillTemplate, subdivisionsPerLevel);
 		

@@ -100,4 +100,29 @@ public class Point3D implements Comparable<Point3D> {
 	private double length() {
 		return Math.sqrt(this.x*this.x+this.y*this.y+this.z*this.z);
 	}
+
+	/**
+	 * Computes a rotated point around the given center.
+	 * @param angle
+	 * @param center
+	 * @return
+	 */
+	public Point3D rotate2D(double angle, Point3D center)
+	{
+		// rotate using polar coordinates
+		double rad = this.distTo(center);
+		double phi = this.angleTo2D(center) - Math.PI + angle;
+		
+		return new Point3D(center.x + rad * Math.cos(phi), center.y + rad * Math.sin(phi), this.z);
+	}
+	
+	/**
+	 * Computes the angle between the x-axis through the given point "center" and this.
+	 * @param p2
+	 * @return angle in radians, atan2(this.y-center.y, this.x-center.x)+pi.
+	 */
+	public double angleTo2D(Point3D center)
+	{
+		return (Math.atan2(this.y-center.y, this.x-center.x) + Math.PI);
+	}
 }

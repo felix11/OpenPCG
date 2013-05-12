@@ -29,6 +29,9 @@ import javax.swing.JTabbedPane;
 import worldgenerator.geometry.civilization.City;
 import worldgenerator.geometry.civilization.CityFactory;
 import worldgenerator.geometry.civilization.CityFactory.CityAttributes;
+import worldgenerator.geometry.civilization.Road;
+import worldgenerator.geometry.civilization.RoadFactory;
+import worldgenerator.geometry.civilization.RoadFactory.RoadAttributes;
 import worldgenerator.geometry.forest.ForestFactory.ForestAttributes;
 import worldgenerator.geometry.forest.ForestFactory.ForestLevels;
 import worldgenerator.geometry.resource.Resources;
@@ -83,7 +86,9 @@ public class MainGUI extends JFrame
 	private Grid2D<Integer> cityGrid;
 	private Collection<City> villages;
 	private Grid2D<Integer> villageGrid;
-	private Grid2D<Double> populationDensityGrid;
+	private Grid2D<Double> populationDensity;
+	private Collection<Road> roads;
+	private Grid2D<Double> roadsGrid;
 
 	private ActionListener generateTerrainActionListener = new ActionListener() {
 
@@ -95,8 +100,8 @@ public class MainGUI extends JFrame
 			//else
 			{
 				// create terrain
-				int height = 128;
-				int width = 128;
+				int height = 256;
+				int width = 256;
 				int seed = 1;// (int)System.currentTimeMillis();
 				
 				GridAttributes attributes = new GridAttributes(height, width, seed);
@@ -111,30 +116,43 @@ public class MainGUI extends JFrame
 				terrain = TerrainFactory.create(attributes, forestAttributes);
 				
 				// create cities
-				double cityDensity = 0.002;
+				double cityDensity = 0.001;
 				double idealDistance = 5; // distance 5 cols/rows
 				int minPop = 1;
 				int maxPop = 1000;
 				CityAttributes cAttributes = new CityAttributes(cityDensity, minPop, maxPop, idealDistance, seed);
 				cities = CityFactory.create(terrain, cAttributes);
-				cityGrid = CityFactory.createGrid(cities, attributes);
 				
 				// create villages
-				cityDensity = 0.006;
+				cityDensity = 0.004;
 				idealDistance = 2; // distance 5 cols/rows
 				minPop = 1;
 				maxPop = maxPop / 3;
 				cAttributes = new CityAttributes(cityDensity, minPop, maxPop, idealDistance, seed);
 				villages = CityFactory.create(terrain, cAttributes);
+				
+				// link villages and cities
+				CityFactory.link(cities, villages);
+
+				cityGrid = CityFactory.createGrid(cities, attributes);
 				villageGrid = CityFactory.createGrid(villages, attributes);
 
 				// create population density map
-				int kernel_size = 10; // size of the kernel with which the population density map is created
+				int kernel_size = 20; // size of the kernel with which the population density map is created
 				GridAttributes pAttributes = new GridAttributes(height, width, seed, kernel_size);
 				Collection<City> population = new LinkedList<City>();
 				population.addAll(cities);
 				population.addAll(villages);
-				populationDensityGrid = CityFactory.createPopulationDensityGrid(population, pAttributes);
+				populationDensity = CityFactory.createPopulationDensityGrid(terrain.getHeightMap(0), population, pAttributes);
+				
+				// create road network
+				int maxRoads = 100;
+				double maxDistance = 25;
+				double minDistance = 2;
+				double searchAngle = 60;
+				RoadAttributes rAttributes = new RoadAttributes(maxRoads, maxDistance, minDistance, searchAngle, seed);
+				roads = RoadFactory.createRoadNetwork(population, terrain.getHeightMap(0), rAttributes);
+				roadsGrid = RoadFactory.createGrid(roads, attributes);
 				
 				updateTabs();
 			}
@@ -156,7 +174,7 @@ public class MainGUI extends JFrame
 		// plot heightmap
 		try
 		{
-			int level = 3;
+			int level = 0;
 			int width2 = terrain.getHeightMap(level).cols();
 			int height2 = terrain.getHeightMap(level).rows();
 			GridPlotter2D plotter = new GridPlotter2D(terrain.getHeightMap(level));
@@ -237,10 +255,23 @@ public class MainGUI extends JFrame
 		// plot population density map
 		try
 		{
-			GridPlotter2D plotter = new GridPlotter2D(populationDensityGrid);
+			GridPlotter2D plotter = new GridPlotter2D(populationDensity);
 			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			plotter.plot2image(image);
 			plotter.plot2file("test_populationdensitymap.txt");
+			resourcesImageLabel.setIcon(new ImageIcon(image));
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		// plot road map
+		try
+		{
+			GridPlotter2D plotter = new GridPlotter2D(roadsGrid);
+			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			plotter.plot2image(image);
+			plotter.plot2file("test_roads.txt");
 			resourcesImageLabel.setIcon(new ImageIcon(image));
 		} catch (IOException e)
 		{

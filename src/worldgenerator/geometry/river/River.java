@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import worldgenerator.geometry.Point3D;
-import worldgenerator.geometry.WorldObject;
+import worldgenerator.util.factory.WorldObject;
 
 /**
  * @author Felix Dietrich
