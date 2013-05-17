@@ -26,20 +26,22 @@ import java.awt.Canvas;
 import java.awt.CardLayout;
 import javax.swing.JTabbedPane;
 
-import worldgenerator.geometry.civilization.City;
-import worldgenerator.geometry.civilization.CityFactory;
-import worldgenerator.geometry.civilization.CityFactory.CityAttributes;
-import worldgenerator.geometry.civilization.Road;
-import worldgenerator.geometry.civilization.RoadFactory;
-import worldgenerator.geometry.civilization.RoadFactory.RoadAttributes;
-import worldgenerator.geometry.forest.ForestFactory.ForestAttributes;
-import worldgenerator.geometry.forest.ForestFactory.ForestLevels;
-import worldgenerator.geometry.resource.Resources;
-import worldgenerator.geometry.terrain.Terrain;
-import worldgenerator.geometry.terrain.TerrainFactory;
 import worldgenerator.io.GridPlotter2D;
 import worldgenerator.locale.Messages;
-import worldgenerator.util.grid.Grid2D;
+import worldgenerator.objects.civilization.City;
+import worldgenerator.objects.civilization.CityFactory;
+import worldgenerator.objects.civilization.Civilization;
+import worldgenerator.objects.civilization.CivilizationFactory;
+import worldgenerator.objects.civilization.Road;
+import worldgenerator.objects.civilization.RoadFactory;
+import worldgenerator.objects.civilization.CityFactory.CityAttributes;
+import worldgenerator.objects.civilization.RoadFactory.RoadAttributes;
+import worldgenerator.objects.forest.ForestFactory.ForestAttributes;
+import worldgenerator.objects.forest.ForestFactory.ForestLevels;
+import worldgenerator.objects.resource.Resources;
+import worldgenerator.objects.terrain.Terrain;
+import worldgenerator.objects.terrain.TerrainFactory;
+import worldgenerator.util.grid.ComparableGrid2D;
 import worldgenerator.util.grid.GridFactory;
 import worldgenerator.util.grid.GridFactory.GridAttributes;
 import worldgenerator.util.grid.GridType;
@@ -60,6 +62,11 @@ import javax.swing.Icon;
 public class MainGUI extends JFrame
 {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8669491024374462771L;
+	
 	private JPanel contentPane;
 	private ActionListener exitButtonActionListener = new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
@@ -82,15 +89,14 @@ public class MainGUI extends JFrame
 	};
 
 	private Terrain terrain;
-	private Collection<City> cities;
-	private Grid2D<Integer> cityGrid;
-	private Collection<City> villages;
-	private Grid2D<Integer> villageGrid;
-	private Grid2D<Double> populationDensity;
-	private Collection<Road> roads;
-	private Grid2D<Double> roadsGrid;
+	private Civilization civilization;
+	
+	private ComparableGrid2D<Integer> cityGrid;
+	private ComparableGrid2D<Double> populationDensity;
+	private ComparableGrid2D<Double> roadsGrid;
 
 	private ActionListener generateTerrainActionListener = new ActionListener() {
+
 
 		public void actionPerformed(ActionEvent e) {
 			//if(terrain != null)
@@ -100,9 +106,9 @@ public class MainGUI extends JFrame
 			//else
 			{
 				// create terrain
-				int height = 256;
-				int width = 256;
-				int seed = 1;// (int)System.currentTimeMillis();
+				int height = 128;
+				int width = 128;
+				int seed = 2;// (int)System.currentTimeMillis();
 				
 				GridAttributes attributes = new GridAttributes(height, width, seed);
 
@@ -116,34 +122,11 @@ public class MainGUI extends JFrame
 				terrain = TerrainFactory.create(attributes, forestAttributes);
 				
 				// create cities
-				double cityDensity = 0.001;
+				double cityDensity = 0.005;
 				double idealDistance = 5; // distance 5 cols/rows
 				int minPop = 1;
 				int maxPop = 1000;
 				CityAttributes cAttributes = new CityAttributes(cityDensity, minPop, maxPop, idealDistance, seed);
-				cities = CityFactory.create(terrain, cAttributes);
-				
-				// create villages
-				cityDensity = 0.004;
-				idealDistance = 2; // distance 5 cols/rows
-				minPop = 1;
-				maxPop = maxPop / 3;
-				cAttributes = new CityAttributes(cityDensity, minPop, maxPop, idealDistance, seed);
-				villages = CityFactory.create(terrain, cAttributes);
-				
-				// link villages and cities
-				CityFactory.link(cities, villages);
-
-				cityGrid = CityFactory.createGrid(cities, attributes);
-				villageGrid = CityFactory.createGrid(villages, attributes);
-
-				// create population density map
-				int kernel_size = 20; // size of the kernel with which the population density map is created
-				GridAttributes pAttributes = new GridAttributes(height, width, seed, kernel_size);
-				Collection<City> population = new LinkedList<City>();
-				population.addAll(cities);
-				population.addAll(villages);
-				populationDensity = CityFactory.createPopulationDensityGrid(terrain.getHeightMap(0), population, pAttributes);
 				
 				// create road network
 				int maxRoads = 100;
@@ -151,8 +134,20 @@ public class MainGUI extends JFrame
 				double minDistance = 2;
 				double searchAngle = 60;
 				RoadAttributes rAttributes = new RoadAttributes(maxRoads, maxDistance, minDistance, searchAngle, seed);
-				roads = RoadFactory.createRoadNetwork(population, terrain.getHeightMap(0), rAttributes);
-				roadsGrid = RoadFactory.createGrid(roads, attributes);
+				
+				// create civilization
+				civilization = CivilizationFactory.create(terrain, cAttributes, rAttributes);
+
+				// create city and villages grids
+				cityGrid = CityFactory.createGrid(civilization.getCities(), attributes);
+
+				// create population density map
+				int kernel_size = 20; // size of the kernel with which the population density map is created
+				GridAttributes pAttributes = new GridAttributes(height, width, seed, kernel_size);
+				populationDensity = CityFactory.createPopulationDensityGrid(terrain.getHeightMap(0), civilization.getCities(), pAttributes);
+
+				// create road grid
+				roadsGrid = RoadFactory.createGrid(civilization.getRoads(), attributes);
 				
 				updateTabs();
 			}
@@ -177,7 +172,7 @@ public class MainGUI extends JFrame
 			int level = 0;
 			int width2 = terrain.getHeightMap(level).cols();
 			int height2 = terrain.getHeightMap(level).rows();
-			GridPlotter2D plotter = new GridPlotter2D(terrain.getHeightMap(level));
+			GridPlotter2D plotter = new GridPlotter2D(terrain.getHeightMap(level,0,0));
 			BufferedImage image = new BufferedImage(width2, height2, BufferedImage.TYPE_INT_ARGB);
 			plotter.plot2image(image);
 			plotter.plot2file("test_heightmap.txt");
@@ -233,19 +228,6 @@ public class MainGUI extends JFrame
 			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			plotter.plot2image(image);
 			plotter.plot2file("test_citymap.txt");
-			resourcesImageLabel.setIcon(new ImageIcon(image));
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		// plot village map
-		try
-		{
-			GridPlotter2D plotter = new GridPlotter2D(villageGrid);
-			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-			plotter.plot2image(image);
-			plotter.plot2file("test_villagemap.txt");
 			resourcesImageLabel.setIcon(new ImageIcon(image));
 		} catch (IOException e)
 		{

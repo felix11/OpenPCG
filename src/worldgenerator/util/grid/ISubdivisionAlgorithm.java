@@ -7,5 +7,5 @@ package worldgenerator.util.grid;
  */
 public interface ISubdivisionAlgorithm<U extends Comparable<U>>
 {
-	public Grid2D<U> createNewLayer(final Grid2D<U> oldLayer, final int subdivisionsPerLevel);
+	public Grid2DLayer<U> createNewLayer(int seed, final Grid2DLayer<U> oldLayer, final int subdivisionsPerLevel);
 }

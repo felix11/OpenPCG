@@ -1,7 +1,7 @@
 /**
  * 
  */
-package worldgenerator.geometry.resource;
+package worldgenerator.objects.resource;
 
 /**
  * @author Felix Dietrich

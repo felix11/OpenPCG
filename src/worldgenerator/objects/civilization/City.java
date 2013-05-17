@@ -1,7 +1,7 @@
 /**
  * 
  */
-package worldgenerator.geometry.civilization;
+package worldgenerator.objects.civilization;
 
 import geometry.Point3D;
 
@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import worldgenerator.util.factory.WorldObject;
-import worldgenerator.util.grid.GridCell;
+import worldgenerator.util.grid.GridCellComparable;
 
 /**
  * Represents a city.
@@ -22,7 +22,7 @@ public class City extends WorldObject
 	/**
 	 * @return the height
 	 */
-	public GridCell<Double> getHeight()
+	public GridCellComparable<Double> getHeight()
 	{
 		return height;
 	}
@@ -56,15 +56,15 @@ public class City extends WorldObject
 		return population;
 	}
 
-	private final GridCell<Double> height;
+	private final GridCellComparable<Double> height;
 	private final Point3D position;
-	private final GridCell<Integer> ID;
+	private final GridCellComparable<Integer> ID;
 	private final String name;
 	private final Map<City, CityLink> links;
 	private double soilQuality;
 	private int population;
 
-	public City(GridCell<Integer> ID, int row, int col, GridCell<Double> height)
+	public City(GridCellComparable<Integer> ID, int row, int col, GridCellComparable<Double> height)
 	{
 		this.ID = ID;
 		this.name = "";
@@ -80,7 +80,7 @@ public class City extends WorldObject
 		this.links.put(c, new CityLink(this, c, strength));
 	}
 
-	public GridCell<Integer> getID()
+	public GridCellComparable<Integer> getID()
 	{
 		return this.ID;
 	}

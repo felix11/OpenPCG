@@ -7,10 +7,10 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import worldgenerator.geometry.river.GridCellRiverVertex;
-import worldgenerator.geometry.river.River;
-import worldgenerator.geometry.river.RiverFactory;
 import worldgenerator.io.RiverPlotter;
+import worldgenerator.objects.river.GridCellRiverVertex;
+import worldgenerator.objects.river.River;
+import worldgenerator.objects.river.RiverFactory;
 
 public class TestRiverPlotter {
 	private static final GridCellRiverVertex source = new GridCellRiverVertex(new Point3D(0,0,0), 1);

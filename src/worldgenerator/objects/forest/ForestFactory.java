@@ -1,7 +1,7 @@
 /**
  * 
  */
-package worldgenerator.geometry.forest;
+package worldgenerator.objects.forest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,9 +11,11 @@ import java.util.Random;
 import worldgenerator.util.factory.IWorldObjectFactory;
 import worldgenerator.util.grid.CellularAutomata;
 import worldgenerator.util.grid.CellularAutomata.CAStep;
+import worldgenerator.util.grid.ComparableGrid2D;
 import worldgenerator.util.grid.Grid2D;
 import worldgenerator.util.grid.Grid2D.Grid2DIterator;
 import worldgenerator.util.grid.GridCell;
+import worldgenerator.util.grid.GridCellComparable;
 import worldgenerator.util.grid.GridFactory;
 import worldgenerator.util.grid.GridFactory.GridAttributes;
 import worldgenerator.util.grid.GridType;
@@ -74,9 +76,9 @@ public class ForestFactory implements IWorldObjectFactory
 	 * @param attributes
 	 * @return
 	 */
-	public static Map<Integer,Grid2D<Double>> create(final Grid2D<Double> heightmap, final Grid2D<Double> soilmap, final ForestAttributes attributes)
+	public static Map<Integer,ComparableGrid2D<Double>> create(final ComparableGrid2D<Double> heightmap, final ComparableGrid2D<Double> soilmap, final ForestAttributes attributes)
 	{
-		final Map<Integer,Grid2D<Double>> result = new HashMap<Integer,Grid2D<Double>>();
+		final Map<Integer,ComparableGrid2D<Double>> result = new HashMap<Integer,ComparableGrid2D<Double>>();
 		final Random rand = new Random(attributes.seed);
 		
 		// generate a 2D grid for each level, initialised with 0.0
@@ -97,7 +99,7 @@ public class ForestFactory implements IWorldObjectFactory
 				{
 					if(level.getValue().lower <= height && level.getValue().upper >= height)
 					{
-						Grid2D<Double> grid = result.get(level.getKey());
+						ComparableGrid2D<Double> grid = result.get(level.getKey());
 
 						// TODO: modify tree probability at this position, currently based on level.
 						double heightprob = (height-level.getValue().lower)/(level.getValue().upper - level.getValue().lower);
@@ -117,11 +119,11 @@ public class ForestFactory implements IWorldObjectFactory
 		// grow forests for some steps
 		for(Entry<Integer, ForestLevels> level : attributes.levels.entrySet())
 		{
-			Grid2D<Double> initialGrid = result.get(level.getKey());
+			ComparableGrid2D<Double> initialGrid = result.get(level.getKey());
 			CellularAutomata<Double> automata = new CellularAutomata<Double>(initialGrid, new CAStep<Double>() {
 
 				@Override
-				public Grid2D<Double> work(Grid2D<Double> grid)
+				public ComparableGrid2D<Double> work(ComparableGrid2D<Double> grid)
 				{
 					// iterate over the forest probabilities and grow
 					grid.iterate(new Grid2DIterator<Double>()

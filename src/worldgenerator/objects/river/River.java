@@ -1,7 +1,7 @@
 /**
  * 
  */
-package worldgenerator.geometry.river;
+package worldgenerator.objects.river;
 
 import java.util.Collection;
 import java.util.LinkedList;

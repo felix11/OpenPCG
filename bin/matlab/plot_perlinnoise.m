@@ -7,7 +7,6 @@ fileres = 'test_resmap.txt';
 filewaters = 'test_watershedmap.txt';
 filesoil = 'test_soilmap.txt';
 filecities = 'test_citymap.txt';
-filevillages = 'test_villagemap.txt';
 fileroads = 'test_roads.txt';
 filepopulationdensity = 'test_populationdensitymap.txt';
 fileforest1 = 'test_forestmap1.txt';
@@ -17,15 +16,13 @@ mapresources = readmap(path, fileres);
 mapw = readmap(path, filewaters);
 maps = readmap(path, filesoil);
 mapc = readmap(path, filecities);
-mapv = readmap(path, filevillages);
 maproads = readmap(path, fileroads);
 mappd = readmap(path, filepopulationdensity);
 mapf1 = readmap(path, fileforest1);
 
 %convert2tga(maph,[path 'test_heightmap.bmp']);
 
-% combine villages and cities in one map
-mapc = mapc + mapv;
+% combine cities in one map, dont use population count
 mapc(mapc > 0) = 1;
 mapc(mapc < 1) = 0;
 

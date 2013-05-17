@@ -3,8 +3,8 @@
  */
 package worldgenerator.io;
 
-import worldgenerator.geometry.river.GridCellRiverVertex;
-import worldgenerator.geometry.river.River;
+import worldgenerator.objects.river.GridCellRiverVertex;
+import worldgenerator.objects.river.River;
 
 /**
  * Plots a river with subrivers.<br>

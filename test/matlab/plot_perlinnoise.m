@@ -7,7 +7,6 @@ fileres = 'test_resmap.txt';
 filewaters = 'test_watershedmap.txt';
 filesoil = 'test_soilmap.txt';
 filecities = 'test_citymap.txt';
-filevillages = 'test_villagemap.txt';
 fileroads = 'test_roads.txt';
 filepopulationdensity = 'test_populationdensitymap.txt';
 fileforest1 = 'test_forestmap1.txt';
@@ -17,15 +16,13 @@ mapresources = readmap(path, fileres);
 mapw = readmap(path, filewaters);
 maps = readmap(path, filesoil);
 mapc = readmap(path, filecities);
-mapv = readmap(path, filevillages);
 maproads = readmap(path, fileroads);
 mappd = readmap(path, filepopulationdensity);
 mapf1 = readmap(path, fileforest1);
 
 %convert2tga(maph,[path 'test_heightmap.bmp']);
 
-% combine villages and cities in one map
-mapc = mapc + mapv;
+% combine cities in one map, dont use population count
 mapc(mapc > 0) = 1;
 mapc(mapc < 1) = 0;
 
@@ -35,9 +32,12 @@ mapresources = imresize(mapresources,s);
 %mapc = imresize(mapc,s,'nearest');
 mapf1 = imresize(mapf1,s);
 
-figure(1)
-mapheights = (mapheights)*1;
-mapheights(mapc > 0) = max(max(mapheights));
+zcolormin = -3;
+zcolormax = 10;
+
+figure(6)
+mapheights = ((mapheights))*10;
+%mapheights(mapc > 0) = max(max(mapheights));
 %map = imread('real_island1.tif');
 %map = imread('canyon_1.tif');
 %map = imread('real_island2.tif');
@@ -45,12 +45,13 @@ mapheights(mapc > 0) = max(max(mapheights));
 %map = map / max(max(map)) * 20000 / 512;
 
 % plot heightmap first
-imagesc(mapheights)
-zlimits = [min(mapheights(:)) max(mapheights(:))];
+surf(mapheights)
+zlimits = [zcolormin zcolormax];
 demcmap(zlimits,255);
 %colormap(gray)
-shading interp
-axis image
+shading flat
+%axis image
+axis equal
 axis off
 box off
 
@@ -61,7 +62,7 @@ hold on
 contour(mapresources*200,10)
 %zlimits = [min(mapr(:)) max(mapr(:))];
 %demcmap(zlimits,64);
-shading interp
+%shading interp
 hold off
 
 % blend watersheds
@@ -113,11 +114,12 @@ colorbar
 shading interp
 axis image
 
-
+figure(5)
+return
 figure(1)
 hold on
 % plot heightmap first
 contour(mapf1,2)
 colorbar
-axis image
+%axis image
 hold off

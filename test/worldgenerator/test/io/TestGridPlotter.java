@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import worldgenerator.io.GridPlotter2D;
-import worldgenerator.util.grid.Grid2D;
+import worldgenerator.util.grid.ComparableGrid2D;
 import worldgenerator.util.grid.GridCellDouble;
 
 
@@ -15,11 +15,11 @@ public class TestGridPlotter {
 	private static GridPlotter2D plotter;
 	private static int width = 2;
 	private static int height = 2;
-	private Grid2D<Double> grid;
+	private ComparableGrid2D<Double> grid;
 
 	@Before
 	public void setUp() throws Exception {
-		grid = new Grid2D<Double>(height, width, new GridCellDouble(0.0));
+		grid = new ComparableGrid2D<Double>(height, width, new GridCellDouble(0.0));
 		plotter = new GridPlotter2D(grid);
 	}
 

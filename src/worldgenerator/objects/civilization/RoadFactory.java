@@ -1,7 +1,7 @@
 /**
  * 
  */
-package worldgenerator.geometry.civilization;
+package worldgenerator.objects.civilization;
 
 import geometry.Line;
 import geometry.Point;
@@ -15,7 +15,7 @@ import java.util.Random;
 import java.util.TreeSet;
 
 import worldgenerator.util.factory.IWorldObjectFactory;
-import worldgenerator.util.grid.Grid2D;
+import worldgenerator.util.grid.ComparableGrid2D;
 import worldgenerator.util.grid.GridCellDouble;
 import worldgenerator.util.grid.GridFactory;
 import worldgenerator.util.grid.GridFactory.GridAttributes;
@@ -61,12 +61,12 @@ public class RoadFactory implements IWorldObjectFactory<Road>
 		}
 	}
 	
-	public static Collection<Road> createRoadNetwork(final Collection<City> population, final Grid2D<Double> heightmap, RoadAttributes attributes)
+	public static Collection<Road> createRoadNetwork(final Collection<City> population, final ComparableGrid2D<Double> heightmap, RoadAttributes attributes)
 	{
 		Collection<Road> result = new LinkedList<Road>();
 		Collection<Line> lines = new LinkedList<Line>();
 		
-		final Grid2D<Double> multHeightmap = heightmap.clone();
+		final ComparableGrid2D<Double> multHeightmap = heightmap.clone();
 		multHeightmap.mult(new GridCellDouble(10.0));
 		
 		// create link set ordered by distance
@@ -136,7 +136,7 @@ public class RoadFactory implements IWorldObjectFactory<Road>
 	 * @param attributes
 	 * @return
 	 */
-	public static Collection<Road> createRoadNetwork(Grid2D<Double> populationDensity, Grid2D<Double> heightmap, RoadAttributes attributes)
+	public static Collection<Road> createRoadNetwork(ComparableGrid2D<Double> populationDensity, ComparableGrid2D<Double> heightmap, RoadAttributes attributes)
 	{
 		Collection<Road> result = new LinkedList<Road>();
 		
@@ -250,7 +250,7 @@ public class RoadFactory implements IWorldObjectFactory<Road>
 	 * @param heightmap 
 	 * @return
 	 */
-	private static double computeRayQuality(Point3D last, Point3D next, Grid2D<Double> population, Grid2D<Double> heightmap)
+	private static double computeRayQuality(Point3D last, Point3D next, ComparableGrid2D<Double> population, ComparableGrid2D<Double> heightmap)
 	{
 		double quality = 0.0;
 		for(int sample = 0; sample < SAMPLES_PER_RAY; sample++)
@@ -288,9 +288,9 @@ public class RoadFactory implements IWorldObjectFactory<Road>
 	 * @param attributes
 	 * @return
 	 */
-	public static Grid2D<Double> createGrid(Collection<Road> roads, GridAttributes attributes)
+	public static ComparableGrid2D<Double> createGrid(Collection<Road> roads, GridAttributes attributes)
 	{
-		Grid2D<Double> result = GridFactory.create2D(GridType.DOUBLE_2D, attributes);
+		ComparableGrid2D<Double> result = GridFactory.create2D(GridType.DOUBLE_2D, attributes);
 		
 		for(Road road: roads)
 		{

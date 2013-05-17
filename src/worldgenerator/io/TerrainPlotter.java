@@ -3,8 +3,8 @@
  */
 package worldgenerator.io;
 
-import worldgenerator.geometry.river.River;
-import worldgenerator.geometry.terrain.Terrain;
+import worldgenerator.objects.river.River;
+import worldgenerator.objects.terrain.Terrain;
 
 /**
  * @author Felix Dietrich

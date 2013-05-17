@@ -3,6 +3,7 @@
  */
 package worldgenerator.util.grid;
 
+import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,16 +17,16 @@ import java.util.Map.Entry;
  */
 public class MipMapGrid2D<T extends Comparable<T>> extends Grid2D<T>
 {
-	private Map<Integer, Grid2D<T>> grids;
 	private int subdivisionsPerLevel;
 	private int maxLevel;
+	private Map<Integer, Grid2DLayer<T>> grids;
 	
 	/**
 	 * Creates a MipMapGrid2D with given dimensions, default value and number of levels.
 	 * @param height height of the smallest mipmap
 	 * @param width width of the smallest mipmap
 	 * @param fillTemplate
-	 * @param subdivisionsPerLevel number of subdivisions per new level. each subdivision creates subdivisionsPerLevel*2 subdivisions (given per side, hence *2) of the largest stored map. must be a power of 2.
+	 * @param subdivisionsPerLevel number of subdivisions per new level. each subdivision creates subdivisionsPerLevel^2 subdivisions (given per side, hence ^2) of the larger stored map.
 	 */
 	public MipMapGrid2D(int height, int width, GridCell<T> fillTemplate, int subdivisionsPerLevel)
 	{
@@ -35,37 +36,24 @@ public class MipMapGrid2D<T extends Comparable<T>> extends Grid2D<T>
 		if(subdivisionsPerLevel < 0)
 			throw new IllegalArgumentException("subdivisions per level must be >= 0.");
 		
-		double divlog = Math.log(subdivisionsPerLevel) / Math.log(2);
-		if(Math.floor(divlog) != divlog )
-			throw new IllegalArgumentException("subdivisions must be a power of 2");
+		//double divlog = Math.log(subdivisionsPerLevel) / Math.log(2);
+		//if(Math.floor(divlog) != divlog )
+		//	throw new IllegalArgumentException("subdivisions must be a power of 2");
 		
 		this.subdivisionsPerLevel = subdivisionsPerLevel;
 		// the maximum level of detail is zero, i.e. only the base layer is present at the moment.
 		this.maxLevel = 0;
-		// put the base level also in the grids
-		this.grids = new HashMap<Integer, Grid2D<T>>();
-		this.grids.put(0, this);
+		
+		// put the base level in the grids
+		grids = new HashMap<Integer, Grid2DLayer<T>>();
+		grids.put(maxLevel, new Grid2DLayer<T>(new ComparableGrid2D<T>(height, width, fillTemplate)));
 	}
 	
-	public MipMapGrid2D(Grid2D<T> basemap, int subdivisionsPerLevel)
+	public MipMapGrid2D(ComparableGrid2D<T> basemap, int subdivisionsPerLevel)
 	{
 		this(basemap.rows(), basemap.cols(), basemap.fillTemplate, subdivisionsPerLevel);
 		this.data = basemap.clone().data;
-		this.setLayer(0, basemap);
-	}
-
-	public void setDataAtLayer(int row, int col, int layer, GridCell<T> data)
-	{
-		if(layer > maxLevel || layer < 0)
-			throw new IllegalArgumentException("layer " + layer + "is not supported by this mipmap grid.");
-		grids.get(layer).setDataAt(row, col, data);
-	}
-	
-	public GridCell<T> getDataAtLayer(int row, int col, int layer)
-	{
-		if(layer > maxLevel || layer < 0)
-			throw new IllegalArgumentException("layer " + layer + "is not supported by this mipmap grid.");
-		return grids.get(layer).getDataAt(row, col);
+		this.setLayer(0, new Grid2DLayer<T>(basemap));
 	}
 	
 	/**
@@ -73,25 +61,26 @@ public class MipMapGrid2D<T extends Comparable<T>> extends Grid2D<T>
 	 * Each time the basis is subdivided n times, where n was given in the constructor as subdivisionsPerLevel.
 	 * If the basis was subdivided before, only the levels that were not created yet are created.
 	 * @param newMaxLevel
+	 * @param newMaxLevel 
 	 * @param subdivider the algorithm by which a layer should be subdivided.
 	 */
-	public void subdivide(int newMaxLevel, ISubdivisionAlgorithm<T> subdivider)
+	public void subdivide(int seed, int newMaxLevel, ISubdivisionAlgorithm<T> subdivider)
 	{
 		for(int level = maxLevel+1; level <= newMaxLevel; level++)
 		{
-			Grid2D<T> lastLayer = grids.get(level-1);
-			Grid2D<T> newLayer = subdivider.createNewLayer(lastLayer, subdivisionsPerLevel);
+			Grid2DLayer<T> lastLayer = grids.get(level-1);
+			Grid2DLayer<T> newLayer = subdivider.createNewLayer(seed, lastLayer, subdivisionsPerLevel);
 			grids.put(level, newLayer);
 		}
 		maxLevel = newMaxLevel;
 	}
 
-	private void setLayer(Integer level, Grid2D<T> value)
+	private void setLayer(Integer level, Grid2DLayer<T> value)
 	{
 		this.grids.put(level, value);
 	}
 
-	public Grid2D<T> getLayer(int layer)
+	public Grid2DLayer<T> getLayer(int layer)
 	{
 		return grids.get(layer);
 	}
@@ -102,15 +91,20 @@ public class MipMapGrid2D<T extends Comparable<T>> extends Grid2D<T>
 		MipMapGrid2D<T> result = new MipMapGrid2D<T>(this.rows(), this.cols(), fillTemplate, subdivisionsPerLevel);
 		
 		// clone the basis grid
-		Grid2D<T> basis = super.clone();
+		ComparableGrid2D<T> basis = getBasisGrid();
 		result.data = basis.data;
 		
 		// clone the subdivisions
-		for(Entry<Integer, Grid2D<T>> subdivision : grids.entrySet())
+		for(Entry<Integer, Grid2DLayer<T>> subdivision : grids.entrySet())
 		{
 			result.setLayer(subdivision.getKey(), subdivision.getValue().clone());
 		}
 		
 		return result;
+	}
+
+	private ComparableGrid2D<T> getBasisGrid()
+	{
+		return (ComparableGrid2D<T>) grids.get(0).getDataAt(0, 0).getData();
 	}
 }

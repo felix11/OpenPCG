@@ -1,7 +1,7 @@
 /**
  * 
  */
-package worldgenerator.geometry.civilization;
+package worldgenerator.objects.civilization;
 
 import geometry.Point3D;
 

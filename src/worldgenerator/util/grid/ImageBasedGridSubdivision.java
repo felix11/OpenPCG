@@ -43,10 +43,12 @@ public class ImageBasedGridSubdivision implements ISubdivisionAlgorithm<Double>
     }
 
 	@Override
-	public Grid2D<Double> createNewLayer(final Grid2D<Double> oldLayer, final int subdivisionsPerLevel)
+	public Grid2DLayer<Double> createNewLayer(final int seed, final Grid2DLayer<Double> oldLayer, final int subdivisionsPerLevel)
 	{
 		GridAttributes attributes = new GridAttributes(oldLayer.rows() * subdivisionsPerLevel, oldLayer.cols() * subdivisionsPerLevel, seed);
-		Grid2D<Double> result = GridFactory.create2D(GridType.DOUBLE_2D, attributes);
+		Grid2DLayer<Double> result = null;
+		
+		/*GridFactory.create2D(GridType.DOUBLE_2D, attributes);
 		
 		final BufferedImage before = new BufferedImage(oldLayer.cols(), oldLayer.rows(), BufferedImage.TYPE_INT_ARGB);
 		
@@ -79,7 +81,7 @@ public class ImageBasedGridSubdivision implements ISubdivisionAlgorithm<Double>
 				float[] rgb = c.getRGBComponents(null);
 				grid2d.setDataAt(row, col, new GridCellDouble((double)calculateHeight(rgb[0], rgb[1], rgb[2])));
 			}
-		});
+		});*/
 		
 		return result;
 	}

@@ -8,7 +8,7 @@ package worldgenerator.util.grid;
  * @author Felix Dietrich
  *
  */
-public class GridCellDouble extends GridCell<Double> {
+public class GridCellDouble extends GridCellComparable<Double> {
 
 	private int precision = 4;
 	
@@ -28,18 +28,18 @@ public class GridCellDouble extends GridCell<Double> {
 	}
 	
 	@Override
-	protected GridCell<Double> clone() {
+	protected GridCellComparable<Double> clone() {
 		return new GridCellDouble(this.data, this.precision);
 	}
 
 	@Override
-	public GridCell<Double> mult(GridCell<Double> toMult)
+	public GridCellComparable<Double> mult(GridCell<Double> toMult)
 	{
 		return new GridCellDouble(data * toMult.data);
 	}
 
 	@Override
-	public GridCell<Double> add(GridCell<Double> toAdd)
+	public GridCellComparable<Double> add(GridCell<Double> toAdd)
 	{
 		return new GridCellDouble(data + toAdd.data);
 	}

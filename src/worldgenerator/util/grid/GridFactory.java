@@ -46,19 +46,19 @@ public class GridFactory {
 		}
 	}
 	
-	public static Grid2D<Double> create2D(GridType gridType, GridAttributes attributes)
+	public static ComparableGrid2D<Double> create2D(GridType gridType, GridAttributes attributes)
 	{
-		Grid2D<Double> result = null;
+		ComparableGrid2D<Double> result = null;
 		double max = 0;
 		double min = 0;
 		
 		switch(gridType)
 		{
 		case DOUBLE_2D:
-			result = new Grid2D<Double>(attributes.height, attributes.width, new GridCellDouble(0.0));
+			result = new ComparableGrid2D<Double>(attributes.height, attributes.width, new GridCellDouble(0.0));
 			break;
 		case PERLIN_NOISE_2D:
-			result = new Grid2D<Double>(attributes.height, attributes.width, new GridCellDouble(0.0));
+			result = new ComparableGrid2D<Double>(attributes.height, attributes.width, new GridCellDouble(0.0));
 			generatePerlinNoiseGrid2D(result, attributes.seed);
 			max = result.getMaximum().getData();
 			min = result.getMinimum().getData();
@@ -69,7 +69,7 @@ public class GridFactory {
 		case SPARSE_PERLIN_NOISE_2D:
 			result = create2D(GridType.PERLIN_NOISE_2D, attributes);
 			GridAttributes scatterAttributes = new GridAttributes(attributes.height, attributes.width, attributes.seed+1, attributes.factor);
-			Grid2D<Double> scatter = create2D(GridType.PERLIN_NOISE_2D, scatterAttributes);
+			ComparableGrid2D<Double> scatter = create2D(GridType.PERLIN_NOISE_2D, scatterAttributes);
 			scatter.clamp(scatter, 0.0, scatter.getMaximum().getData());
 			result.mult(scatter);
 			
@@ -87,7 +87,7 @@ public class GridFactory {
 		return result;
 	}
 
-	private static void rescaleGrid2D(Grid2D<Double> result, double min, double max)
+	private static void rescaleGrid2D(ComparableGrid2D<Double> result, double min, double max)
 	{
 		double rows = result.rows();
 		double cols = result.cols();
@@ -110,7 +110,7 @@ public class GridFactory {
 	 * 
 	 * @param result
 	 */
-	private static void generatePerlinNoiseGrid2D(Grid2D<Double> result, int seed) {
+	private static void generatePerlinNoiseGrid2D(ComparableGrid2D<Double> result, int seed) {
 		double rows = result.rows();
 		double cols = result.cols();
 		

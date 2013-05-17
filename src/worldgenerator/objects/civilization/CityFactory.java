@@ -1,18 +1,20 @@
 /**
  * 
  */
-package worldgenerator.geometry.civilization;
+package worldgenerator.objects.civilization;
 
 import geometry.Point3D;
 
 import java.util.Collection;
 import java.util.LinkedList;
 
-import worldgenerator.geometry.terrain.Terrain;
+import worldgenerator.objects.terrain.Terrain;
 import worldgenerator.util.factory.IWorldObjectFactory;
+import worldgenerator.util.grid.ComparableGrid2D;
 import worldgenerator.util.grid.Grid2D;
 import worldgenerator.util.grid.Grid2D.Grid2DIterator;
 import worldgenerator.util.grid.GridCell;
+import worldgenerator.util.grid.GridCellComparable;
 import worldgenerator.util.grid.GridCellInteger;
 import worldgenerator.util.grid.GridFactory.GridAttributes;
 import worldgenerator.util.grid.GridUtils;
@@ -52,11 +54,19 @@ public class CityFactory implements IWorldObjectFactory<City>
 		}
 	}
 	
+	/**
+	 * Creates cities based on the height map, soil quality and given city attributes.
+	 * @param terrain
+	 * @param attributes
+	 * @return
+	 */
 	public static Collection<City> create(Terrain terrain, CityAttributes attributes)
 	{
-		Grid2D<Double> heightmap = terrain.getHeightMap(0);
-		Grid2D<Double> soilQuality = terrain.getSoilQualityMap();
+		ComparableGrid2D<Double> heightmap = terrain.getHeightMap(0);
+		ComparableGrid2D<Double> soilQuality = terrain.getSoilQualityMap();
 		Collection<City> cities = new LinkedList<City>();
+		
+		RandomSource.rand.setSeed(attributes.seed);
 		
 		int ID = 0;
 		
@@ -123,7 +133,13 @@ public class CityFactory implements IWorldObjectFactory<City>
 		
 		int min = attributes.minPopulation;
 		int max = attributes.maxPopulation;
-		c.setPopulationSize((int)(min + populationFactor * (max-min)));
+		int population = (int)(min + populationFactor * (max-min));
+
+		// correction factor so that the overall population density is exponentially distributed, assuming that "population" is uniformly distributed
+		// TODO: calculate correction formula
+		double correction = 1;
+		
+		c.setPopulationSize((int)(population * correction));
 	}
 
 	/**
@@ -132,9 +148,9 @@ public class CityFactory implements IWorldObjectFactory<City>
 	 * @param attributes
 	 * @return
 	 */
-	public static Grid2D<Integer> createGrid(Collection<City> cities, GridAttributes attributes)
+	public static ComparableGrid2D<Integer> createGrid(Collection<City> cities, GridAttributes attributes)
 	{
-		Grid2D<Integer> result = new Grid2D<Integer>(attributes.height, attributes.width, new GridCellInteger(0));
+		ComparableGrid2D<Integer> result = new ComparableGrid2D<Integer>(attributes.height, attributes.width, new GridCellInteger(0));
 		
 		for(City city : cities)
 		{
@@ -151,12 +167,12 @@ public class CityFactory implements IWorldObjectFactory<City>
 	 * @param attributes
 	 * @return
 	 */
-	public static Grid2D<Double> createPopulationDensityGrid(final Grid2D<Double> heightmap, Collection<City> cities, GridAttributes attributes)
+	public static ComparableGrid2D<Double> createPopulationDensityGrid(final ComparableGrid2D<Double> heightmap, Collection<City> cities, GridAttributes attributes)
 	{
 		if(attributes.factor <= 0)
 			throw new IllegalArgumentException("CityAttributes.density must set the kernel size and must thus be > 0.");
 		
-		Grid2D<Double> result = GridUtils.int2double(createGrid(cities, attributes));
+		ComparableGrid2D<Double> result = GridUtils.int2double(createGrid(cities, attributes));
 		GridUtils.ApplyGaussianFilter(result, (int)attributes.factor);
 		
 		result.iterate(new Grid2DIterator<Double>()
@@ -180,15 +196,13 @@ public class CityFactory implements IWorldObjectFactory<City>
 	 * 
 	 * @param cityCollections
 	 */
-	public static void link(Collection<City>... cityCollections)
+	public static void link(Collection<City> cityCollection1, Collection<City> cityCollection2)
 	{
 		Collection<City> allcities = new LinkedList<City>();
 		
 		// unify all cities in one array
-		for(Collection<City> cc : cityCollections)
-		{
-			allcities.addAll(cc);
-		}
+		allcities.addAll(cityCollection1);
+		allcities.addAll(cityCollection2);
 		
 		// loop over all cities and link them
 		for(City c1 : allcities)

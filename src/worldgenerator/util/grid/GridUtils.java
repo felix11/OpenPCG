@@ -19,7 +19,7 @@ public class GridUtils
 	 * @param grid
 	 * @param kernel_size
 	 */
-	public static void ApplyGaussianFilter(Grid2D<Double> grid, int kernel_size)
+	public static void ApplyGaussianFilter(ComparableGrid2D<Double> grid, int kernel_size)
 	{
 		int kernel_rows = kernel_size;
 		int kernel_cols = kernel_size;
@@ -51,7 +51,7 @@ public class GridUtils
 			}
 		}
 		
-		Grid2D<Double> copy = grid.clone();
+		ComparableGrid2D<Double> copy = grid.clone();
 
 		// iterate over each pixel in the image
 		for (int row = 0; row < grid.rows(); row++)
@@ -88,9 +88,9 @@ public class GridUtils
 	 * @param intgrid
 	 * @return
 	 */
-	public static Grid2D<Double> int2double(final Grid2D<Integer> intgrid)
+	public static ComparableGrid2D<Double> int2double(final ComparableGrid2D<Integer> intgrid)
 	{
-		Grid2D<Double> doublegrid = new Grid2D<Double>(intgrid.rows(), intgrid.cols(), new GridCellDouble((double)intgrid.fillTemplate.getData()));
+		ComparableGrid2D<Double> doublegrid = new ComparableGrid2D<Double>(intgrid.rows(), intgrid.cols(), new GridCellDouble((double)intgrid.fillTemplate.getData()));
 		doublegrid.iterate(new Grid2DIterator<Double>()
 		{
 

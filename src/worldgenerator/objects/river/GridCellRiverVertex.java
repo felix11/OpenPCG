@@ -1,13 +1,14 @@
 /**
  * 
  */
-package worldgenerator.geometry.river;
+package worldgenerator.objects.river;
 
 import geometry.Point3D;
 
 import java.util.Comparator;
 
 import worldgenerator.util.grid.GridCell;
+import worldgenerator.util.grid.GridCellComparable;
 
 /**
  * Represents a vertex of a river.
@@ -15,7 +16,7 @@ import worldgenerator.util.grid.GridCell;
  * 
  * @author Felix Dietrich
  */
-public class GridCellRiverVertex extends GridCell<Point3D> {
+public class GridCellRiverVertex extends GridCellComparable<Point3D> {
 	private Point3D position;
 	private double flux;
 
@@ -25,7 +26,7 @@ public class GridCellRiverVertex extends GridCell<Point3D> {
 	}
 
 	@Override
-	protected GridCell<Point3D> clone() {
+	protected GridCellComparable<Point3D> clone() {
 		return new GridCellRiverVertex(this.position, this.flux);
 	}
 
@@ -43,13 +44,13 @@ public class GridCellRiverVertex extends GridCell<Point3D> {
 	}
 
 	@Override
-	public GridCell<Point3D> mult(GridCell<Point3D> toMult)
+	public GridCellComparable<Point3D> mult(GridCell<Point3D> toMult)
 	{
 		throw new UnsupportedOperationException("mult is not implemented for a GridCellRiverVertex.");
 	}
 
 	@Override
-	public GridCell<Point3D> add(GridCell<Point3D> toAdd)
+	public GridCellComparable<Point3D> add(GridCell<Point3D> toAdd)
 	{
 		throw new UnsupportedOperationException("add is not implemented for a GridCellRiverVertex.");
 	}

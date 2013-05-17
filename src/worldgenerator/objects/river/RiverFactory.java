@@ -1,4 +1,4 @@
-package worldgenerator.geometry.river;
+package worldgenerator.objects.river;
 
 import geometry.Point3D;
 
@@ -10,8 +10,8 @@ import java.util.Queue;
 import worldgenerator.util.factory.IWorldObjectFactory;
 import worldgenerator.util.grid.CellularAutomata;
 import worldgenerator.util.grid.CellularAutomata.CAStep;
-import worldgenerator.util.grid.Grid2D;
-import worldgenerator.util.grid.GridCell;
+import worldgenerator.util.grid.ComparableGrid2D;
+import worldgenerator.util.grid.GridCellComparable;
 import worldgenerator.util.grid.GridCellDouble;
 import worldgenerator.util.grid.GridCellInteger;
 import worldgenerator.util.grid.GridFactory;
@@ -94,7 +94,7 @@ public class RiverFactory implements IWorldObjectFactory<River> {
 		addRandomVertices(result, source, sink, newVertices, stretch);
 		
 		int mapsize = 512;
-		Grid2D<Point3D> rivermap = new Grid2D<Point3D>(mapsize, mapsize, new GridCellRiverVertex(new Point3D(0.0, 0.0, 0.0), 0.0));
+		ComparableGrid2D<Point3D> rivermap = new ComparableGrid2D<Point3D>(mapsize, mapsize, new GridCellRiverVertex(new Point3D(0.0, 0.0, 0.0), 0.0));
 		// go on creating other rivers
 		
 		return result;
@@ -131,7 +131,7 @@ public class RiverFactory implements IWorldObjectFactory<River> {
 	 * @param heightmap
 	 * @return
 	 */
-	public static Collection<River> createMultiple(Grid2D<Double> heightmap, int Nrivers) {
+	public static Collection<River> createMultiple(ComparableGrid2D<Double> heightmap, int Nrivers) {
 		Collection<River> rivers = new LinkedList<River>();
 		
 		return rivers;
@@ -144,12 +144,12 @@ public class RiverFactory implements IWorldObjectFactory<River> {
 	 * @param attributes
 	 * @return
 	 */
-	public static Grid2D<Integer> createWatersheds(final Grid2D<Double> heightmap, GridAttributes attributes)
+	public static ComparableGrid2D<Integer> createWatersheds(final ComparableGrid2D<Double> heightmap, GridAttributes attributes)
 	{
 		// cutoff value below which no watersheds form
 		final double waterShedCutoff = 0.10;
 		
-		Grid2D<Integer> initialData = new Grid2D<Integer>(attributes.height, attributes.width, new GridCellInteger(-999));
+		ComparableGrid2D<Integer> initialData = new ComparableGrid2D<Integer>(attributes.height, attributes.width, new GridCellInteger(-999));
 		
 		// store the indices in the initial data to be able to assign different numbers to the watersheds lateron
 		/*for(int r=0; r < attributes.height; r++)
@@ -164,7 +164,7 @@ public class RiverFactory implements IWorldObjectFactory<River> {
 		CellularAutomata<Integer> automata = new CellularAutomata<Integer>(initialData, new CAStep<Integer>()
 		{
 			@Override
-			public Grid2D<Integer> work(Grid2D<Integer> grid)
+			public ComparableGrid2D<Integer> work(ComparableGrid2D<Integer> grid)
 			{
 				for(int r=0; r < grid.rows(); r++)
 				{
@@ -202,7 +202,7 @@ public class RiverFactory implements IWorldObjectFactory<River> {
 		CellularAutomata<Integer> automataExpand = new CellularAutomata<Integer>(initialData, new CAStep<Integer>()
 		{
 			@Override
-			public Grid2D<Integer> work(Grid2D<Integer> grid)
+			public ComparableGrid2D<Integer> work(ComparableGrid2D<Integer> grid)
 			{
 				for(int r=0; r < grid.rows(); r++)
 				{

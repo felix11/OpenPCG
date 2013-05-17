@@ -4,20 +4,18 @@
 package worldgenerator.util.grid;
 
 /**
+ * An abstract version of a grid cell.
  * @author Felix Dietrich
- * 
+ *
  */
-public abstract class GridCell<T extends Comparable<T>> implements Comparable<GridCell<T>> {
-	
+public abstract class GridCell<T>
+{
 	protected T data;
 	
 	public GridCell(T data)
 	{
 		this.data = data;
 	}
-	
-	@Override
-	public abstract String toString();
 	
 	@Override
 	protected abstract GridCell<T> clone();
@@ -28,10 +26,5 @@ public abstract class GridCell<T extends Comparable<T>> implements Comparable<Gr
 	public T getData()
 	{
 		return data;
-	}
-
-	public int compareTo(GridCell<T> newData)
-	{
-		return this.data.compareTo(newData.data);
 	}
 }

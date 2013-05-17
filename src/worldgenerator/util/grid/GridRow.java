@@ -11,5 +11,5 @@ import java.util.Collection;
  */
 public abstract class GridRow {
 
-	public abstract Collection<GridCell> getCells();
+	public abstract Collection<GridCellComparable> getCells();
 }

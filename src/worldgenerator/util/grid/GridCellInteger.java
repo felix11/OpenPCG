@@ -7,7 +7,7 @@ package worldgenerator.util.grid;
  * @author Felix Dietrich
  *
  */
-public class GridCellInteger extends GridCell<Integer>
+public class GridCellInteger extends GridCellComparable<Integer>
 {
 
 	public GridCellInteger(Integer data)
@@ -28,19 +28,19 @@ public class GridCellInteger extends GridCell<Integer>
 	 * @see worldgenerator.util.grid.GridCell#clone()
 	 */
 	@Override
-	protected GridCell<Integer> clone()
+	protected GridCellComparable<Integer> clone()
 	{
 		return new GridCellInteger(data);
 	}
 
 	@Override
-	public GridCell<Integer> mult(GridCell<Integer> toMult)
+	public GridCellComparable<Integer> mult(GridCell<Integer> toMult)
 	{
 		return new GridCellInteger(this.data * toMult.data);
 	}
 
 	@Override
-	public GridCell<Integer> add(GridCell<Integer> toAdd)
+	public GridCellComparable<Integer> add(GridCell<Integer> toAdd)
 	{
 		return new GridCellInteger(this.data + toAdd.data);
 	}

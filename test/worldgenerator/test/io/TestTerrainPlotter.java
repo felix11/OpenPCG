@@ -7,11 +7,11 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import worldgenerator.geometry.forest.ForestFactory.ForestAttributes;
-import worldgenerator.geometry.forest.ForestFactory.ForestLevels;
-import worldgenerator.geometry.terrain.Terrain;
-import worldgenerator.geometry.terrain.TerrainFactory;
 import worldgenerator.io.TerrainPlotter;
+import worldgenerator.objects.forest.ForestFactory.ForestAttributes;
+import worldgenerator.objects.forest.ForestFactory.ForestLevels;
+import worldgenerator.objects.terrain.Terrain;
+import worldgenerator.objects.terrain.TerrainFactory;
 import worldgenerator.util.grid.GridFactory.GridAttributes;
 
 public class TestTerrainPlotter {

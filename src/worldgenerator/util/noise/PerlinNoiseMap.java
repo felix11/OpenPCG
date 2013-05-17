@@ -62,7 +62,7 @@ public class PerlinNoiseMap {
 	public void Perturb2(float f, float d, float s) {
 		int u, v;
 		double variance = 0;
-		double mean = mean(Heights);
+		double mean = 0;//mean(Heights);
 		float[][] temp = new float[Size][Size];
 		for (int i = 0; i < Size; ++i) {
 			for (int j = 0; j < Size; ++j) {
@@ -135,7 +135,7 @@ public class PerlinNoiseMap {
 	 */
 	public void Erode2(float smoothness, float s) {
 		double variance = 0;
-		double mean = mean(Heights);
+		double mean = 0;//mean(Heights);
 				
 		for (int i = 1; i < Size - 1; i++) {
 			for (int j = 1; j < Size - 1; j++) {

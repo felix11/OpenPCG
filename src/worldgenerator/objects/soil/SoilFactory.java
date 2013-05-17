@@ -1,10 +1,10 @@
 /**
  * 
  */
-package worldgenerator.geometry.soil;
+package worldgenerator.objects.soil;
 
 import worldgenerator.util.factory.IWorldObjectFactory;
-import worldgenerator.util.grid.Grid2D;
+import worldgenerator.util.grid.ComparableGrid2D;
 import worldgenerator.util.grid.GridFactory;
 import worldgenerator.util.grid.GridType;
 import worldgenerator.util.grid.GridFactory.GridAttributes;
@@ -21,9 +21,9 @@ public class SoilFactory implements IWorldObjectFactory
 	 * @param watersheds
 	 * @return
 	 */
-	public static Grid2D<Double> computeQualityMap(Grid2D<Double> heightmap, Grid2D<Integer> watersheds, GridAttributes attributes)
+	public static ComparableGrid2D<Double> computeQualityMap(ComparableGrid2D<Double> heightmap, ComparableGrid2D<Integer> watersheds, GridAttributes attributes)
 	{
-		Grid2D<Double> qualityMap = GridFactory.create2D(GridType.DOUBLE_2D, attributes);
+		ComparableGrid2D<Double> qualityMap = GridFactory.create2D(GridType.DOUBLE_2D, attributes);
 		
 		for(int r=0; r < qualityMap.rows(); r++)
 		{

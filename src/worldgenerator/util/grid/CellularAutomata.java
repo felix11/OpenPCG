@@ -9,7 +9,7 @@ package worldgenerator.util.grid;
  */
 public class CellularAutomata<T extends Comparable<T>> implements ICellularAutomata
 {
-	private Grid2D<T> grid;
+	private ComparableGrid2D<T> grid;
 	private int stepCounter;
 	private CAStep<T> stepFunction;
 	
@@ -21,14 +21,14 @@ public class CellularAutomata<T extends Comparable<T>> implements ICellularAutom
 	 */
 	public interface CAStep<R extends Comparable<R>>
 	{
-		public abstract Grid2D<R> work(Grid2D<R> grid);
+		public abstract ComparableGrid2D<R> work(ComparableGrid2D<R> grid);
 	}
 	
 	/**
 	 * Initializes the automata with a copy of the initial data.
 	 * @param initialData
 	 */
-	public CellularAutomata(Grid2D<T> initialData, CAStep<T> step)
+	public CellularAutomata(ComparableGrid2D<T> initialData, CAStep<T> step)
 	{
 		this.grid = initialData.clone();
 		this.stepCounter = 0;
@@ -54,7 +54,7 @@ public class CellularAutomata<T extends Comparable<T>> implements ICellularAutom
 		}
 	}
 
-	public Grid2D<T> result()
+	public ComparableGrid2D<T> result()
 	{
 		return grid;
 	}

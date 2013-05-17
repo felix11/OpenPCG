@@ -8,8 +8,9 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import worldgenerator.util.grid.Grid2D;
+import worldgenerator.util.grid.ComparableGrid2D;
 import worldgenerator.util.grid.GridCell;
+import worldgenerator.util.grid.GridCellComparable;
 
 /**
  * @author Felix Dietrich
@@ -18,12 +19,12 @@ import worldgenerator.util.grid.GridCell;
 public class GridPlotter2D<T extends Comparable<T>> extends APlotter {
 
 	private static final Color TRANSPARENT = new Color(0,0,0,0);
-	private Grid2D<T> grid;
+	private ComparableGrid2D<T> grid;
 
 	/**
 	 * 
 	 */
-	public GridPlotter2D(Grid2D<T> grid) {
+	public GridPlotter2D(ComparableGrid2D<T> grid) {
 		this.grid = grid;
 	}
 
@@ -71,7 +72,7 @@ public class GridPlotter2D<T extends Comparable<T>> extends APlotter {
 		{
 			for(int col=0; col < grid.cols(); col++)
 			{
-				GridCell<T> cell = grid.getDataAt(row, col);
+				GridCellComparable<T> cell = grid.getDataAt(row, col);
 				float d = (float)Math.max(0, Math.min(1.0, Double.parseDouble(cell.toString())));
 				rgbArray[row * grid.cols() + col] = new Color(d,d,d).getRGB();
 			}
