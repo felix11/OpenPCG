@@ -42,7 +42,7 @@ public class Terrain extends WorldObject
 	private ISubdivisionAlgorithm<Double> heightSubdivisionAlgorithm = new HeightSubdivisionAlgorithm();
 	
 	public Terrain(ComparableGrid2D<Double> heightmap, Map<Resources, ComparableGrid2D<Double>> resources, ComparableGrid2D<Integer> watersheds, Collection<River> rivers, ComparableGrid2D<Double> soilQuality, Map<Integer, ComparableGrid2D<Double>> forests) {
-		// only subdivide once per layer, i.e. no tesselation at all
+		// 1 means only subdivide once per layer, i.e. no tesselation at all
 		this.heights = new MipMapGrid2D<Double>(heightmap, 2);
 		this.rivers = rivers;
 		this.watersheds = watersheds;

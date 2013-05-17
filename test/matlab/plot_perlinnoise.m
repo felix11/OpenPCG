@@ -35,7 +35,7 @@ mapf1 = imresize(mapf1,s);
 zcolormin = -3;
 zcolormax = 10;
 
-figure(6)
+figure(1)
 mapheights = ((mapheights))*10;
 %mapheights(mapc > 0) = max(max(mapheights));
 %map = imread('real_island1.tif');

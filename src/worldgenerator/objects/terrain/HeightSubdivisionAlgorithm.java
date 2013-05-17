@@ -5,9 +5,11 @@ package worldgenerator.objects.terrain;
 
 import java.util.Random;
 
+import worldgenerator.util.grid.ComparableGrid2D;
 import worldgenerator.util.grid.Grid2D;
 import worldgenerator.util.grid.Grid2DLayer;
 import worldgenerator.util.grid.GridCell;
+import worldgenerator.util.grid.GridCellDouble;
 import worldgenerator.util.grid.ISubdivisionAlgorithm;
 import worldgenerator.util.grid.Grid2D.Grid2DIterator;
 import worldgenerator.util.noise.PerlinNoiseMap;
@@ -27,6 +29,11 @@ public class HeightSubdivisionAlgorithm implements ISubdivisionAlgorithm<Double>
 		int newrows = subdivisionsPerLevel * oldLayer.rows();
 		int newcols = subdivisionsPerLevel * oldLayer.cols();
 		Grid2DLayer<Double> result = new Grid2DLayer<Double>(newrows, newcols, oldLayer.getBaseGrid());
+		
+		// this grid stores maximum and minimum values to rescale the layer later to the max and min values of the old layer
+		final Grid2D<Double> maxmin = new ComparableGrid2D<Double>(1,2, new GridCellDouble(0.0));
+		final int MAXIMUM = 0;
+		final int MINIMUM = 1;
 		
 		// create random object for diamond square algorithm
 		final Random rand = new Random(seed);
@@ -89,10 +96,80 @@ public class HeightSubdivisionAlgorithm implements ISubdivisionAlgorithm<Double>
 						val = Math.signum(val) * Math.pow(val, power);
 						val = (val + 2.0*grid2d.getDataAt(row, col).getData()) / 3.0;
 						grid2d.setDataAt(row, col, val);
+						
+						// store maximum and minimum values for rescaling later
+						if(val < maxmin.getDataAt(0, MINIMUM).getData())
+						{
+							maxmin.setDataAt(0, MINIMUM, val);
+						}
+						if(val > maxmin.getDataAt(0, MAXIMUM).getData())
+						{
+							maxmin.setDataAt(0, MAXIMUM, val);
+						}
 					}
 				});
 			}
 		});
+		
+		// compute rescaling factors
+		final GridCell<Double> newMinimumInverted = new GridCellDouble(-maxmin.getDataAt(0, MINIMUM).getData()); // 
+		final GridCell<Double> oldMinimum = new GridCellDouble(getMinimum(oldLayer));
+		double diffOld = (getMaximum(oldLayer)-oldMinimum.getData());
+		double diffNew = (maxmin.getDataAt(0, MAXIMUM).getData() - maxmin.getDataAt(0, MINIMUM).getData());
+		final GridCellDouble rescaleFactor = new GridCellDouble( diffOld / diffNew );
+		
+		// rescale the new grids to oldLayer.maximum and .minimum
+		result.iterate(new Grid2DIterator<Grid2D<Double>>()
+		{
+			@Override
+			public void step(int row, int col, GridCell<Grid2D<Double>> gridCell, Grid2D<Grid2D<Double>> grid2d)
+			{
+				// move to zero base
+				gridCell.getData().add(newMinimumInverted);
+				// scale to new max/min
+				gridCell.getData().mult(rescaleFactor);
+				// move to new minimum
+				gridCell.getData().add(oldMinimum);
+			}
+		});
+		
+		return result;
+	}
+
+	private Double getMaximum(Grid2DLayer<Double> oldLayer)
+	{
+		double result = Double.MIN_VALUE;
+		
+		for(int row=0; row < oldLayer.rows(); row++)
+		{
+			for(int col=0; col < oldLayer.cols(); col++)
+			{
+				GridCell<Double> max = ((ComparableGrid2D<Double>)oldLayer.getDataAt(row, col).getData()).getMaximum();
+				if(result < max.getData())
+				{
+					result = max.getData();
+				}
+			}
+		}
+		
+		return result;
+	}
+
+	private Double getMinimum(Grid2DLayer<Double> oldLayer)
+	{
+		double result = Double.MAX_VALUE;
+		
+		for(int row=0; row < oldLayer.rows(); row++)
+		{
+			for(int col=0; col < oldLayer.cols(); col++)
+			{
+				GridCell<Double> min = ((ComparableGrid2D<Double>)oldLayer.getDataAt(row, col).getData()).getMinimum();
+				if(result > min.getData())
+				{
+					result = min.getData();
+				}
+			}
+		}
 		
 		return result;
 	}
