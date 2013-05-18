@@ -26,7 +26,8 @@ import java.awt.Canvas;
 import java.awt.CardLayout;
 import javax.swing.JTabbedPane;
 
-import worldgenerator.io.GridPlotter2D;
+import worldgenerator.io.Grid2DLayerPlotter;
+import worldgenerator.io.Grid2DPlotter;
 import worldgenerator.locale.Messages;
 import worldgenerator.objects.civilization.City;
 import worldgenerator.objects.civilization.CityFactory;
@@ -106,8 +107,9 @@ public class MainGUI extends JFrame
 			//else
 			{
 				// create terrain
-				int height = 128;
-				int width = 128;
+				int terrain_scale = 1;
+				int height = 128 * terrain_scale;
+				int width = 128 * terrain_scale;
 				int seed = 2;// (int)System.currentTimeMillis();
 				
 				GridAttributes attributes = new GridAttributes(height, width, seed);
@@ -122,7 +124,7 @@ public class MainGUI extends JFrame
 				terrain = TerrainFactory.create(attributes, forestAttributes);
 				
 				// create cities
-				double cityDensity = 0.005;
+				double cityDensity = 0.01;
 				double idealDistance = 5; // distance 5 cols/rows
 				int minPop = 1;
 				int maxPop = 1000;
@@ -172,11 +174,17 @@ public class MainGUI extends JFrame
 			int level = 0;
 			int width2 = terrain.getHeightMap(level).cols();
 			int height2 = terrain.getHeightMap(level).rows();
-			GridPlotter2D plotter = new GridPlotter2D(terrain.getHeightMap(level,0,0));
+			Grid2DPlotter plotter = new Grid2DPlotter(terrain.getHeightMap(level,0,0));
 			BufferedImage image = new BufferedImage(width2, height2, BufferedImage.TYPE_INT_ARGB);
 			plotter.plot2image(image);
 			plotter.plot2file("test_heightmap.txt");
 			heightImageLabel.setIcon(new ImageIcon(image));
+			
+			// plot the heightmap layers
+			int plotlayer = 2;
+			Grid2DLayerPlotter<Double> layerplotter = new Grid2DLayerPlotter<Double>(terrain.getHeightmapLayer(plotlayer));
+			layerplotter.plot2files("test_heightmap");
+			
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -185,7 +193,7 @@ public class MainGUI extends JFrame
 		// plot first resourcemap
 		try
 		{
-			GridPlotter2D plotter = new GridPlotter2D(terrain.getResourceMap(Resources.GOLD));
+			Grid2DPlotter plotter = new Grid2DPlotter(terrain.getResourceMap(Resources.GOLD));
 			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			plotter.plot2image(image);
 			plotter.plot2file("test_resmap.txt");
@@ -198,7 +206,7 @@ public class MainGUI extends JFrame
 		// plot watersheds map
 		try
 		{
-			GridPlotter2D plotter = new GridPlotter2D(terrain.getWatershedMap());
+			Grid2DPlotter plotter = new Grid2DPlotter(terrain.getWatershedMap());
 			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			plotter.plot2image(image);
 			plotter.plot2file("test_watershedmap.txt");
@@ -211,7 +219,7 @@ public class MainGUI extends JFrame
 		// plot soil quality map
 		try
 		{
-			GridPlotter2D plotter = new GridPlotter2D(terrain.getSoilQualityMap());
+			Grid2DPlotter plotter = new Grid2DPlotter(terrain.getSoilQualityMap());
 			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			plotter.plot2image(image);
 			plotter.plot2file("test_soilmap.txt");
@@ -224,7 +232,7 @@ public class MainGUI extends JFrame
 		// plot city map
 		try
 		{
-			GridPlotter2D plotter = new GridPlotter2D(cityGrid);
+			Grid2DPlotter plotter = new Grid2DPlotter(cityGrid);
 			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			plotter.plot2image(image);
 			plotter.plot2file("test_citymap.txt");
@@ -237,7 +245,7 @@ public class MainGUI extends JFrame
 		// plot population density map
 		try
 		{
-			GridPlotter2D plotter = new GridPlotter2D(populationDensity);
+			Grid2DPlotter plotter = new Grid2DPlotter(populationDensity);
 			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			plotter.plot2image(image);
 			plotter.plot2file("test_populationdensitymap.txt");
@@ -250,7 +258,7 @@ public class MainGUI extends JFrame
 		// plot road map
 		try
 		{
-			GridPlotter2D plotter = new GridPlotter2D(roadsGrid);
+			Grid2DPlotter plotter = new Grid2DPlotter(roadsGrid);
 			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			plotter.plot2image(image);
 			plotter.plot2file("test_roads.txt");
@@ -264,7 +272,7 @@ public class MainGUI extends JFrame
 		try
 		{
 			int forestType = 1;
-			GridPlotter2D plotter = new GridPlotter2D(terrain.getForestMap(forestType));
+			Grid2DPlotter plotter = new Grid2DPlotter(terrain.getForestMap(forestType));
 			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			plotter.plot2image(image);
 			plotter.plot2file("test_forestmap" + forestType + ".txt");

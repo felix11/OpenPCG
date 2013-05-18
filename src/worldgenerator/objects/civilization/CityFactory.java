@@ -77,7 +77,8 @@ public class CityFactory implements IWorldObjectFactory<City>
 			{
 				double rval = RandomSource.rand.nextDouble();
 				double h = heightmap.getDataAt(row, col).getData();
-				double soil = soilQuality.getDataAt(row, col).getData();
+				int averageSoilKernelSize = 5;
+				double soil = soilQuality.sumDataOverArea(row, col, averageSoilKernelSize ).getData() / (averageSoilKernelSize*averageSoilKernelSize);
 				if(h > 0 && soil * attributes.density > rval)
 				{
 					City newCity = new City(new GridCellInteger(ID), row, col, heightmap.getDataAt(row, col));
@@ -88,17 +89,7 @@ public class CityFactory implements IWorldObjectFactory<City>
 		}
 		
 		// link cities
-		for(City c1 : cities)
-		{
-			Point3D c1pos = c1.getPosition();
-			for(City c2 : cities)
-			{
-				Point3D c2pos = c2.getPosition();
-				double dist = c1pos.distTo(c2pos);
-				
-				c1.addLink(c2, dist);
-			}
-		}
+		CityFactory.link(cities, new LinkedList<City>());
 		
 		// compute city sizes
 		for(City city : cities)
@@ -193,8 +184,8 @@ public class CityFactory implements IWorldObjectFactory<City>
 
 	/**
 	 * Links all cities given in the collections together, removing old links already stored in the cities.
-	 * 
-	 * @param cityCollections
+	 * @param cityCollection1
+	 * @param cityCollection2
 	 */
 	public static void link(Collection<City> cityCollection1, Collection<City> cityCollection2)
 	{
@@ -212,7 +203,11 @@ public class CityFactory implements IWorldObjectFactory<City>
 			// add new links
 			for(City c2 : allcities)
 			{
-				c1.addLink(c2, c1.getPosition().distTo(c2.getPosition()));
+				// if this is not exactly the same city, link the two
+				if(c1 != c2)
+				{
+					c1.addLink(c2, c1.getPosition().distTo(c2.getPosition()));
+				}
 			}
 		}
 	}

@@ -3,7 +3,6 @@
  */
 package worldgenerator.objects.soil;
 
-import worldgenerator.util.factory.IWorldObjectFactory;
 import worldgenerator.util.grid.ComparableGrid2D;
 import worldgenerator.util.grid.GridFactory;
 import worldgenerator.util.grid.GridType;
@@ -13,7 +12,7 @@ import worldgenerator.util.grid.GridFactory.GridAttributes;
  * @author Felix Dietrich
  *
  */
-public class SoilFactory implements IWorldObjectFactory
+public class SoilFactory
 {
 	/**
 	 * Computes a soil quality map from given height and water data.
@@ -30,7 +29,8 @@ public class SoilFactory implements IWorldObjectFactory
 			for(int c=0; c < qualityMap.cols(); c++)
 			{
 				double h = heightmap.getDataAt(r, c).getData();
-				double val = Math.max(-(Math.abs(h)) + 1, 0);
+				// TODO: change arbitrary formula for soil quality
+				double val = Math.max(-Math.sqrt(Math.abs(h)) + 1, 0);
 				qualityMap.setDataAt(r, c, val);
 			}
 		}

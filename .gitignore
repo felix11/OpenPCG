@@ -22,3 +22,6 @@ build
 # Windows
 thumbs.db
 Thumbs.db
+
+# map files
+*.txt

@@ -7,7 +7,7 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 
-import worldgenerator.io.GridPlotter2D;
+import worldgenerator.io.Grid2DPlotter;
 import worldgenerator.util.grid.ComparableGrid2D;
 import worldgenerator.util.grid.GridFactory;
 import worldgenerator.util.grid.GridFactory.GridAttributes;
@@ -28,7 +28,7 @@ public class TestPerlinNoise3D {
 		GridAttributes attributes = new GridAttributes(height, width, seed);
 		ComparableGrid2D<Double> grid = GridFactory.create2D(GridType.PERLIN_NOISE_2D, attributes );
 		
-		GridPlotter2D plotter = new GridPlotter2D(grid);
+		Grid2DPlotter plotter = new Grid2DPlotter(grid);
 		plotter.plot2file("perlin_noise_grid2d_test.txt");
 	}
 

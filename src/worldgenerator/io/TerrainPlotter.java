@@ -30,7 +30,7 @@ public class TerrainPlotter extends APlotter {
 		sb.append(System.lineSeparator());
 		sb.append("<!-- Heightmap level 0 -->");
 		sb.append(System.lineSeparator());
-		sb.append(new GridPlotter2D(terrain.getHeightMap(0)).plot2string());
+		sb.append(new Grid2DPlotter(terrain.getHeightMap(0)).plot2string());
 		sb.append(System.lineSeparator());
 		
 		// rivers

@@ -8,14 +8,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
-import worldgenerator.util.factory.IWorldObjectFactory;
 import worldgenerator.util.grid.CellularAutomata;
 import worldgenerator.util.grid.CellularAutomata.CAStep;
 import worldgenerator.util.grid.ComparableGrid2D;
 import worldgenerator.util.grid.Grid2D;
 import worldgenerator.util.grid.Grid2D.Grid2DIterator;
 import worldgenerator.util.grid.GridCell;
-import worldgenerator.util.grid.GridCellComparable;
 import worldgenerator.util.grid.GridFactory;
 import worldgenerator.util.grid.GridFactory.GridAttributes;
 import worldgenerator.util.grid.GridType;
@@ -25,7 +23,7 @@ import worldgenerator.util.grid.GridType;
  * @author Felix Dietrich
  *
  */
-public class ForestFactory implements IWorldObjectFactory
+public class ForestFactory
 {
 	public static class ForestLevels
 	{

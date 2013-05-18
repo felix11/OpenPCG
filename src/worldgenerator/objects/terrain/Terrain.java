@@ -81,6 +81,13 @@ public class Terrain extends WorldObject
 		return getHeightMap(layer, 0, 0);
 	}
 	
+	public Grid2DLayer<Double> getHeightmapLayer(int layer)
+	{
+		if(this.heights.getLayer(layer) == null)
+			throw new IllegalArgumentException(String.format("layer %d does not exist.",layer));
+		return this.heights.getLayer(layer);
+	}
+	
 	public ComparableGrid2D<Integer> getWatershedMap()
 	{
 		return this.watersheds;

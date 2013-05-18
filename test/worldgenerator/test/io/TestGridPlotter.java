@@ -5,14 +5,14 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import worldgenerator.io.GridPlotter2D;
+import worldgenerator.io.Grid2DPlotter;
 import worldgenerator.util.grid.ComparableGrid2D;
 import worldgenerator.util.grid.GridCellDouble;
 
 
 public class TestGridPlotter {
 	
-	private static GridPlotter2D plotter;
+	private static Grid2DPlotter plotter;
 	private static int width = 2;
 	private static int height = 2;
 	private ComparableGrid2D<Double> grid;
@@ -20,7 +20,7 @@ public class TestGridPlotter {
 	@Before
 	public void setUp() throws Exception {
 		grid = new ComparableGrid2D<Double>(height, width, new GridCellDouble(0.0));
-		plotter = new GridPlotter2D(grid);
+		plotter = new Grid2DPlotter(grid);
 	}
 
 	@Test

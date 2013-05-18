@@ -3,6 +3,7 @@
 path = '../../';
 file = 'perlin_noise_grid2d_test.txt';
 fileheight = 'test_heightmap.txt';
+fileheight_base = 'test_heightmap';
 fileres = 'test_resmap.txt';
 filewaters = 'test_watershedmap.txt';
 filesoil = 'test_soilmap.txt';
@@ -20,6 +21,9 @@ maproads = readmap(path, fileroads);
 mappd = readmap(path, filepopulationdensity);
 mapf1 = readmap(path, fileforest1);
 
+layer2 = readlayer(path, fileheight_base, 4, 4); % two rows and cols
+mapheights = combinelayer(layer2);
+
 %convert2tga(maph,[path 'test_heightmap.bmp']);
 
 % combine cities in one map, dont use population count
@@ -29,15 +33,19 @@ mapc(mapc < 1) = 0;
 % scale forest, resources and cities maps to the same dimensions as the hm
 s = size(mapheights);
 mapresources = imresize(mapresources,s);
-%mapc = imresize(mapc,s,'nearest');
+mapc = imresize(mapc,s,'nearest');
 mapf1 = imresize(mapf1,s);
+mappd = imresize(mappd,s);
 
-zcolormin = -3;
-zcolormax = 10;
+% scale the map to be able to see its features
+factor = 30;
+zcolormin = -factor/30*9;
+zcolormax = factor;
 
 figure(1)
-mapheights = ((mapheights))*10;
-%mapheights(mapc > 0) = max(max(mapheights));
+subplot(1,2,1)
+mapheights = ((mapheights))*factor;
+mapheights(mapc > 0) = max(max(mapheights));
 %map = imread('real_island1.tif');
 %map = imread('canyon_1.tif');
 %map = imread('real_island2.tif');
@@ -45,13 +53,12 @@ mapheights = ((mapheights))*10;
 %map = map / max(max(map)) * 20000 / 512;
 
 % plot heightmap first
-surf(mapheights)
+imagesc(mapheights)
 zlimits = [zcolormin zcolormax];
 demcmap(zlimits,255);
 %colormap(gray)
 shading flat
-%axis image
-axis equal
+axis image
 axis off
 box off
 
@@ -82,9 +89,13 @@ hold on
 %demcmap(zlimits,64);
 hold off
 
-figure(2)
-mappd(maproads > 0) = max(max(mappd));
+figure(1)
+%mappd(maproads > 0) = max(max(mappd));
+subplot(1,2,2)
 imagesc(mappd)
+hold on
+contour(mapheights)
+hold off
 shading interp
 axis image
 colorbar
@@ -114,7 +125,7 @@ colorbar
 shading interp
 axis image
 
-figure(5)
+figure(1)
 return
 figure(1)
 hold on

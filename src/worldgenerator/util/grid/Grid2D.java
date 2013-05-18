@@ -133,6 +133,31 @@ public abstract class Grid2D<T> implements Grid<T>
 		}
 	}
 
+	/**
+	 * Sums grid cells over an area of averageSoilKernelSize*averageSoilKernelSize cells.
+	 * If any invalid position is encountered, the center value is added instead. This demands that the center is valid.
+	 * @param row
+	 * @param col
+	 * @param averageSoilKernelSize
+	 * @return the sum of all cells in the given square.
+	 */
+	public GridCell<T> sumDataOverArea(int row, int col, int averageSoilKernelSize)
+	{
+		GridCell<T> result = getDataAt(row, col);
+		for(int lrow = row-averageSoilKernelSize/2; lrow < row+averageSoilKernelSize/2; lrow++)
+		{
+			for(int lcol = col-averageSoilKernelSize/2; lcol < col+averageSoilKernelSize/2; lcol++)
+			{
+				// if the data is invalid, add the center
+				if(invalid(lrow, lcol))
+					result = result.add(getDataAt(row, col));
+				else
+					result = result.add(getDataAt(lrow, lcol));
+			}
+		}
+		return result;
+	}
+
 	public int rows() {
 		return data.length;
 	}
