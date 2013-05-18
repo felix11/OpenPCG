@@ -5,10 +5,12 @@ package worldgenerator.objects.terrain;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
-import worldgenerator.objects.resource.Resources;
+import worldgenerator.objects.resource.ResourceType;
 import worldgenerator.objects.river.River;
 import worldgenerator.util.factory.WorldObject;
 import worldgenerator.util.grid.ComparableGrid2D;
@@ -32,7 +34,7 @@ public class Terrain extends WorldObject
 	private final MipMapGrid2D<Double> heights;
 	private final ComparableGrid2D<Integer> watersheds;
 	private final ComparableGrid2D<Double> soilQuality;
-	private final Map<Resources, ComparableGrid2D<Double>> resources;
+	private final Map<ResourceType, ComparableGrid2D<Double>> resources;
 	private final Collection<River> rivers;
 	private Map<Integer, ComparableGrid2D<Double>> forests;
 	
@@ -41,7 +43,7 @@ public class Terrain extends WorldObject
 	 */
 	private ISubdivisionAlgorithm<Double> heightSubdivisionAlgorithm = new HeightSubdivisionAlgorithm();
 	
-	public Terrain(ComparableGrid2D<Double> heightmap, Map<Resources, ComparableGrid2D<Double>> resources, ComparableGrid2D<Integer> watersheds, Collection<River> rivers, ComparableGrid2D<Double> soilQuality, Map<Integer, ComparableGrid2D<Double>> forests) {
+	public Terrain(ComparableGrid2D<Double> heightmap, Map<ResourceType, ComparableGrid2D<Double>> resources, ComparableGrid2D<Integer> watersheds, Collection<River> rivers, ComparableGrid2D<Double> soilQuality, Map<Integer, ComparableGrid2D<Double>> forests) {
 		// 1 means only subdivide once per layer, i.e. no tesselation at all
 		this.heights = new MipMapGrid2D<Double>(heightmap, 2);
 		this.rivers = rivers;
@@ -55,7 +57,7 @@ public class Terrain extends WorldObject
 		return Collections.unmodifiableCollection(rivers);
 	}
 
-	public ComparableGrid2D<Double> getResourceMap(Resources gold) {
+	public ComparableGrid2D<Double> getResourceMap(ResourceType gold) {
 		if(resources.containsKey(gold))
 		{
 			return resources.get(gold);
@@ -111,5 +113,14 @@ public class Terrain extends WorldObject
 	public void tesselate(int newMaxLevel, final int seed)
 	{
 		this.heights.subdivide(seed, newMaxLevel, heightSubdivisionAlgorithm );
+	}
+
+	/**
+	 * All resources available in this terrain.
+	 * @return
+	 */
+	public Set<ResourceType> getResources()
+	{
+		return this.resources.keySet();
 	}
 }

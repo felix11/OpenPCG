@@ -3,13 +3,8 @@
  */
 package worldgenerator.util.grid;
 
-import java.awt.Color;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 
-import worldgenerator.util.grid.Grid2D.Grid2DIterator;
 import worldgenerator.util.grid.GridFactory.GridAttributes;
 
 /**

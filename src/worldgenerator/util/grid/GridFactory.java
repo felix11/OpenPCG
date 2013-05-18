@@ -1,8 +1,6 @@
 package worldgenerator.util.grid;
 
-import worldgenerator.util.grid.GridFactory.GridAttributes;
 import worldgenerator.util.noise.PerlinNoiseMap;
-import worldgenerator.util.noise.PerlinNoise3D;
 
 public class GridFactory {
 	
@@ -68,19 +66,13 @@ public class GridFactory {
 			break;
 		case SPARSE_PERLIN_NOISE_2D:
 			result = create2D(GridType.PERLIN_NOISE_2D, attributes);
-			GridAttributes scatterAttributes = new GridAttributes(attributes.height, attributes.width, attributes.seed+1, attributes.factor);
-			ComparableGrid2D<Double> scatter = create2D(GridType.PERLIN_NOISE_2D, scatterAttributes);
-			scatter.clamp(scatter, 0.0, scatter.getMaximum().getData());
-			result.mult(scatter);
-			
-			// clamp minimum of grid to given factor
+			result.clamp(result.getMaximum().getData() * (1.0-attributes.factor), result.getMaximum().getData());
+
+			// rescale to 0...1
 			max = result.getMaximum().getData();
 			min = result.getMinimum().getData();
-			result.clamp(result, min + attributes.factor * (max-min), max);
-			
-			// rescale to 0...1
-			min = result.getMinimum().getData();
-			rescaleGrid2D(result, min, max);
+			result.add(new GridCellDouble(-min));
+			result.mult(new GridCellDouble(1.0/(max-min)));
 		default:
 			break;
 		}

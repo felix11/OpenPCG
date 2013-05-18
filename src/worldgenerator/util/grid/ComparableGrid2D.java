@@ -60,12 +60,44 @@ public class ComparableGrid2D<T extends Comparable<T>> extends Grid2D<T> {
 	}
 	
 	@Override
+	public void add(Grid2D<T> grid)
+	{
+		maximum = null;
+		minimum = null;
+		super.add(grid);
+	}
+	
+	@Override
+	public void add(GridCell<T> cell)
+	{
+		maximum = null;
+		minimum = null;
+		super.add(cell);
+	}
+	
+	@Override
+	public void mult(Grid2D<T> scatter)
+	{
+		maximum = null;
+		minimum = null;
+		super.mult(scatter);
+	}
+	
+	@Override
+	public void mult(GridCell<T> cell)
+	{
+		maximum = null;
+		minimum = null;
+		super.mult(cell);
+	}
+	
+	@Override
 	public GridCellComparable<T> getDataAt(int row, int col)
 	{
 		return (GridCellComparable<T>) super.getDataAt(row, col);
 	}
 
-	public void clamp(ComparableGrid2D<T> result, T min, T max)
+	public void clamp(T min, T max)
 	{
 		if(this.maximum == this.minimum)
 			return;
@@ -82,12 +114,14 @@ public class ComparableGrid2D<T extends Comparable<T>> extends Grid2D<T> {
 				if(data.compareTo(min) < 0)
 				{
 					data = min;
+					minimum = getDataAt(r, c);
 				}
 				if(data.compareTo(max) > 0)
 				{
 					data = max;
+					maximum = getDataAt(r, c);
 				}
-				// scale between 0 and 1
+				// clamp between min and max
 				setDataAt(r, c, data);
 			}	
 		}

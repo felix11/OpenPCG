@@ -10,6 +10,7 @@ filesoil = 'test_soilmap.txt';
 filecities = 'test_citymap.txt';
 fileroads = 'test_roads.txt';
 filepopulationdensity = 'test_populationdensitymap.txt';
+filepopdensity_base = 'test_populationdensitymap';
 fileforest1 = 'test_forestmap1.txt';
 
 mapheights = readmap(path, fileheight);
@@ -23,6 +24,9 @@ mapf1 = readmap(path, fileforest1);
 
 layer2 = readlayer(path, fileheight_base, 4, 4); % two rows and cols
 mapheights = combinelayer(layer2);
+
+layerpd2 = readlayer(path, filepopdensity_base, 2, 2); % two rows and cols
+mappd = combinelayer(layerpd2);
 
 %convert2tga(maph,[path 'test_heightmap.bmp']);
 
@@ -100,12 +104,12 @@ shading interp
 axis image
 colorbar
 
+return
 figure(3)
 imagesc(maproads)
 shading interp
 axis image
 colorbar
-
 
 figure(4)
 % plot heightmap first

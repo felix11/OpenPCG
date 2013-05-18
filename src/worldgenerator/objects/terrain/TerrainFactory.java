@@ -6,7 +6,7 @@ import java.util.Map;
 
 import worldgenerator.objects.forest.ForestFactory;
 import worldgenerator.objects.forest.ForestFactory.ForestAttributes;
-import worldgenerator.objects.resource.Resources;
+import worldgenerator.objects.resource.ResourceType;
 import worldgenerator.objects.river.River;
 import worldgenerator.objects.river.RiverFactory;
 import worldgenerator.objects.soil.SoilFactory;
@@ -27,14 +27,22 @@ public class TerrainFactory implements IWorldObjectFactory<Terrain>
 		heightmap.mult(new GridCellDouble(1.0/1.5)); // rescale to [-1/3, 1.0]
 		
 		// resources
-		Map<Resources, ComparableGrid2D<Double>> resources = new HashMap<Resources, ComparableGrid2D<Double>>();
-		GridAttributes goldAttributes = new GridAttributes(defaultAttributes.height, defaultAttributes.width, defaultAttributes.seed);
-		goldAttributes.factor = 0.5;
+		Map<ResourceType, ComparableGrid2D<Double>> resources = new HashMap<ResourceType, ComparableGrid2D<Double>>();
+		
+		// Gold
+		GridAttributes goldAttributes = new GridAttributes(defaultAttributes.height, defaultAttributes.width, defaultAttributes.seed+1);
+		goldAttributes.factor = 0.1;
 		ComparableGrid2D<Double> goldMap = GridFactory.create2D(GridType.SPARSE_PERLIN_NOISE_2D, goldAttributes);
-		resources.put(Resources.GOLD, goldMap);
+		resources.put(ResourceType.GOLD, goldMap);
+		
+		// Coal
+		GridAttributes coalAttributes = new GridAttributes(defaultAttributes.height, defaultAttributes.width, defaultAttributes.seed+2);
+		coalAttributes.factor = 0.8;
+		ComparableGrid2D<Double> coalMap = GridFactory.create2D(GridType.SPARSE_PERLIN_NOISE_2D, coalAttributes);
+		resources.put(ResourceType.COAL, coalMap);
 		
 		// watershed and rivers
-		GridAttributes waterAttributes = new GridAttributes(defaultAttributes.height, defaultAttributes.width, defaultAttributes.seed+2);
+		GridAttributes waterAttributes = new GridAttributes(defaultAttributes.height, defaultAttributes.width, defaultAttributes.seed+3);
 		ComparableGrid2D<Integer> watersheds = RiverFactory.createWatersheds(heightmap, waterAttributes);
 		
 		Collection<River> rivers = RiverFactory.createMultiple(heightmap, 0);

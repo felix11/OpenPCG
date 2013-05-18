@@ -3,6 +3,7 @@
 path = '../../';
 file = 'perlin_noise_grid2d_test.txt';
 fileheight = 'test_heightmap.txt';
+fileheight_base = 'test_heightmap';
 fileres = 'test_resmap.txt';
 filewaters = 'test_watershedmap.txt';
 filesoil = 'test_soilmap.txt';
@@ -20,6 +21,9 @@ maproads = readmap(path, fileroads);
 mappd = readmap(path, filepopulationdensity);
 mapf1 = readmap(path, fileforest1);
 
+layer2 = readlayer(path, fileheight_base, 4, 4); % two rows and cols
+mapheights = combinelayer(layer2);
+
 %convert2tga(maph,[path 'test_heightmap.bmp']);
 
 % combine cities in one map, dont use population count
@@ -29,11 +33,18 @@ mapc(mapc < 1) = 0;
 % scale forest, resources and cities maps to the same dimensions as the hm
 s = size(mapheights);
 mapresources = imresize(mapresources,s);
-%mapc = imresize(mapc,s,'nearest');
+mapc = imresize(mapc,s,'nearest');
 mapf1 = imresize(mapf1,s);
+mappd = imresize(mappd,s);
+
+% scale the map to be able to see its features
+factor = 30;
+zcolormin = -factor/30*9;
+zcolormax = factor;
 
 figure(1)
-mapheights = (mapheights)*1;
+subplot(1,2,1)
+mapheights = ((mapheights))*factor;
 mapheights(mapc > 0) = max(max(mapheights));
 %map = imread('real_island1.tif');
 %map = imread('canyon_1.tif');
@@ -43,10 +54,10 @@ mapheights(mapc > 0) = max(max(mapheights));
 
 % plot heightmap first
 imagesc(mapheights)
-zlimits = [min(mapheights(:)) max(mapheights(:))];
+zlimits = [zcolormin zcolormax];
 demcmap(zlimits,255);
 %colormap(gray)
-shading interp
+shading flat
 axis image
 axis off
 box off
@@ -58,7 +69,7 @@ hold on
 contour(mapresources*200,10)
 %zlimits = [min(mapr(:)) max(mapr(:))];
 %demcmap(zlimits,64);
-shading interp
+%shading interp
 hold off
 
 % blend watersheds
@@ -78,19 +89,23 @@ hold on
 %demcmap(zlimits,64);
 hold off
 
-figure(2)
-mappd(maproads > 0) = max(max(mappd));
+figure(1)
+%mappd(maproads > 0) = max(max(mappd));
+subplot(1,2,2)
 imagesc(mappd)
+hold on
+contour(mapheights)
+hold off
 shading interp
 axis image
 colorbar
 
+return
 figure(3)
 imagesc(maproads)
 shading interp
 axis image
 colorbar
-
 
 figure(4)
 % plot heightmap first
@@ -110,11 +125,12 @@ colorbar
 shading interp
 axis image
 
-
+figure(1)
+return
 figure(1)
 hold on
 % plot heightmap first
 contour(mapf1,2)
 colorbar
-axis image
+%axis image
 hold off

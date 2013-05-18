@@ -39,10 +39,11 @@ import worldgenerator.objects.civilization.CityFactory.CityAttributes;
 import worldgenerator.objects.civilization.RoadFactory.RoadAttributes;
 import worldgenerator.objects.forest.ForestFactory.ForestAttributes;
 import worldgenerator.objects.forest.ForestFactory.ForestLevels;
-import worldgenerator.objects.resource.Resources;
+import worldgenerator.objects.resource.ResourceType;
 import worldgenerator.objects.terrain.Terrain;
 import worldgenerator.objects.terrain.TerrainFactory;
 import worldgenerator.util.grid.ComparableGrid2D;
+import worldgenerator.util.grid.Grid2D;
 import worldgenerator.util.grid.GridFactory;
 import worldgenerator.util.grid.GridFactory.GridAttributes;
 import worldgenerator.util.grid.GridType;
@@ -92,9 +93,9 @@ public class MainGUI extends JFrame
 	private Terrain terrain;
 	private Civilization civilization;
 	
-	private ComparableGrid2D<Integer> cityGrid;
-	private ComparableGrid2D<Double> populationDensity;
-	private ComparableGrid2D<Double> roadsGrid;
+	private Grid2D<Integer> cityGrid;
+	private Grid2D<Double> populationDensity;
+	private Grid2D<Double> roadsGrid;
 
 	private ActionListener generateTerrainActionListener = new ActionListener() {
 
@@ -108,8 +109,8 @@ public class MainGUI extends JFrame
 			{
 				// create terrain
 				int terrain_scale = 1;
-				int height = 128 * terrain_scale;
-				int width = 128 * terrain_scale;
+				int height = 64 * terrain_scale;
+				int width = 64 * terrain_scale;
 				int seed = 2;// (int)System.currentTimeMillis();
 				
 				GridAttributes attributes = new GridAttributes(height, width, seed);
@@ -128,7 +129,9 @@ public class MainGUI extends JFrame
 				double idealDistance = 5; // distance 5 cols/rows
 				int minPop = 1;
 				int maxPop = 1000;
-				CityAttributes cAttributes = new CityAttributes(cityDensity, minPop, maxPop, idealDistance, seed);
+				int soilKernelSize = 5;
+				int resourceKernelSize = 30;
+				CityAttributes cAttributes = new CityAttributes(cityDensity, minPop, maxPop, idealDistance, soilKernelSize, resourceKernelSize, seed);
 				
 				// create road network
 				int maxRoads = 100;
@@ -136,17 +139,21 @@ public class MainGUI extends JFrame
 				double minDistance = 2;
 				double searchAngle = 60;
 				RoadAttributes rAttributes = new RoadAttributes(maxRoads, maxDistance, minDistance, searchAngle, seed);
-				
-				// create civilization
-				civilization = CivilizationFactory.create(terrain, cAttributes, rAttributes);
-
-				// create city and villages grids
-				cityGrid = CityFactory.createGrid(civilization.getCities(), attributes);
 
 				// create population density map
 				int kernel_size = 20; // size of the kernel with which the population density map is created
 				GridAttributes pAttributes = new GridAttributes(height, width, seed, kernel_size);
-				populationDensity = CityFactory.createPopulationDensityGrid(terrain.getHeightMap(0), civilization.getCities(), pAttributes);
+				
+				// create civilization
+				civilization = CivilizationFactory.create(terrain, cAttributes, pAttributes, rAttributes);
+				civilization.tesselate(1, seed);
+
+				Collection<City> cities = civilization.getCities();
+				// create city and villages grids
+				cityGrid = CityFactory.createGrid(cities, attributes);
+
+				int player = 1;
+				populationDensity = civilization.getPopulationDensity(player).getBaseGrid();
 
 				// create road grid
 				roadsGrid = RoadFactory.createGrid(civilization.getRoads(), attributes);
@@ -193,7 +200,7 @@ public class MainGUI extends JFrame
 		// plot first resourcemap
 		try
 		{
-			Grid2DPlotter plotter = new Grid2DPlotter(terrain.getResourceMap(Resources.GOLD));
+			Grid2DPlotter plotter = new Grid2DPlotter(terrain.getResourceMap(ResourceType.COAL));
 			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			plotter.plot2image(image);
 			plotter.plot2file("test_resmap.txt");
@@ -246,10 +253,15 @@ public class MainGUI extends JFrame
 		try
 		{
 			Grid2DPlotter plotter = new Grid2DPlotter(populationDensity);
-			BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			BufferedImage image = new BufferedImage(populationDensity.cols(), populationDensity.rows(), BufferedImage.TYPE_INT_ARGB);
 			plotter.plot2image(image);
 			plotter.plot2file("test_populationdensitymap.txt");
 			resourcesImageLabel.setIcon(new ImageIcon(image));
+			
+			// plot the heightmap layers
+			int plotlayer = 1;
+			Grid2DLayerPlotter<Double> layerplotter = new Grid2DLayerPlotter<Double>(civilization.getPopulationDensity(plotlayer));
+			layerplotter.plot2files("test_populationdensitymap");
 		} catch (IOException e)
 		{
 			e.printStackTrace();

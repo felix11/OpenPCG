@@ -7,7 +7,7 @@ package worldgenerator.objects.resource;
  * @author Felix Dietrich
  *
  */
-public enum Resources
+public enum ResourceType
 {
-	GOLD;
+	GOLD, COAL;
 }

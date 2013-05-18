@@ -3,7 +3,6 @@
  */
 package worldgenerator.util.grid;
 
-import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;

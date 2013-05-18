@@ -5,9 +5,11 @@ package worldgenerator.objects.civilization;
 
 import geometry.Point3D;
 
+import java.util.Map;
 import java.util.HashMap;
 import java.util.Map;
 
+import worldgenerator.objects.resource.ResourceType;
 import worldgenerator.util.factory.WorldObject;
 import worldgenerator.util.grid.GridCellComparable;
 
@@ -63,8 +65,9 @@ public class City extends WorldObject
 	private final Map<City, CityLink> links;
 	private double soilQuality;
 	private int population;
+	private Map<ResourceType,Double> resources;
 
-	public City(GridCellComparable<Integer> ID, int row, int col, GridCellComparable<Double> height)
+	public City(GridCellComparable<Integer> ID, int row, int col, GridCellComparable<Double> height, Map<ResourceType,Double> resources)
 	{
 		this.ID = ID;
 		this.name = "";
@@ -73,6 +76,7 @@ public class City extends WorldObject
 		this.links = new HashMap<City, CityLink>();
 		this.soilQuality = 0.0;
 		this.population = 0;
+		this.resources = resources;
 	}
 	
 	public void addLink(City c, double strength)

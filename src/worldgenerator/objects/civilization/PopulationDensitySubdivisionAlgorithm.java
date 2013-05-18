@@ -1,7 +1,7 @@
 /**
  * 
  */
-package worldgenerator.objects.terrain;
+package worldgenerator.objects.civilization;
 
 import java.util.Random;
 
@@ -15,13 +15,13 @@ import worldgenerator.util.grid.Grid2D.Grid2DIterator;
 import worldgenerator.util.noise.PerlinNoiseMap;
 
 /**
- * A subdivision algorithm for heightmaps.
+ * A subdivision algorithm for population density maps.
  * Uses a perlin noise variant plus a modified diamond square algorithm.
  * 
  * @author Felix Dietrich
  *
  */
-public class HeightSubdivisionAlgorithm implements ISubdivisionAlgorithm<Double>
+public class PopulationDensitySubdivisionAlgorithm implements ISubdivisionAlgorithm<Double>
 {
 	@Override
 	public Grid2DLayer<Double> createNewLayer(final int seed, final Grid2DLayer<Double> oldLayer, final int subdivisionsPerLevel)
@@ -66,35 +66,32 @@ public class HeightSubdivisionAlgorithm implements ISubdivisionAlgorithm<Double>
 						int oldRow = row / subdivisionsPerLevel + (layerRow % subdivisionsPerLevel) * oldLayerGrid.rows() / subdivisionsPerLevel;
 						int oldCol = col / subdivisionsPerLevel + (layerCol % subdivisionsPerLevel) * oldLayerGrid.cols() / subdivisionsPerLevel;
 						double newVal = oldLayerGrid.getDataAt(oldRow, oldCol).getData();
+						grid2d.setDataAt(row, col, newVal);
 						
-						// diamond square algorithm
-						int dir = rand.nextInt(dirs.length);
-						int newrow = oldRow + dirs[dir][0];
-						int newcol = oldCol + dirs[dir][1];
+						// mean value
+						int meanKernelSize = 5;
+						double valMean = oldLayerGrid.sumDataOverArea(oldRow, oldCol, meanKernelSize).getData();
+						valMean /= meanKernelSize * meanKernelSize;
 						
-						if(!oldLayerGrid.invalid(newrow, newcol))
-							newVal = (5*newVal + oldLayerGrid.getDataAt(newrow, newcol).getData()) / 6.0;
+						newVal = valMean;
 						
 						// store height value in the perlin map to make pertubations lateron
 						perlinMap.Heights[row][col] = (float)newVal;
-						grid2d.setDataAt(row, col, newVal);
 					}
 				});
 				
 				// pertube based on height
-				perlinMap.Perturb2(8.0f, 16.0f, 32.0f);
+				perlinMap.Perturb2(8.0f, 2.0f, 8.0f);
 				perlinMap.Smoothen();
-				perlinMap.Erode2(5.0f, 3.0f);
+				
 				// copy the data back to the grid, cube it in the process
 				currentLayerGridCell.getData().iterate(new Grid2DIterator<Double>()
 				{
 					@Override
 					public void step(int row, int col, GridCell<Double> gridCell, Grid2D<Double> grid2d)
 					{
-						double val = (double)(perlinMap.Heights[row][col]);
-						double power = 1.0; // cube the data so that coastal areas are flattened, mountains are steepened.
-						val = Math.signum(val) * Math.abs(Math.pow(val, power));
-						val = (val + 2.0*grid2d.getDataAt(row, col).getData()) / 3.0;
+						double val = (double)perlinMap.Heights[row][col];
+						val = Math.max(0.0, (val*2.0 + 1.0*gridCell.getData()) / 3.0);
 						grid2d.setDataAt(row, col, val);
 						
 						// store maximum and minimum values for rescaling later
@@ -110,11 +107,12 @@ public class HeightSubdivisionAlgorithm implements ISubdivisionAlgorithm<Double>
 				});
 			}
 		});
-		
+		/*
 		// compute rescaling factors
 		final GridCell<Double> newMinimumInverted = new GridCellDouble(-maxmin.getDataAt(0, MIN_INDEX).getData()); // 
+		final GridCell<Double> oldMaximum = new GridCellDouble(getMaximum(oldLayer));
 		final GridCell<Double> oldMinimum = new GridCellDouble(getMinimum(oldLayer));
-		double diffOld = (getMaximum(oldLayer)-oldMinimum.getData());
+		double diffOld = (oldMaximum.getData()-oldMinimum.getData());
 		double diffNew = (maxmin.getDataAt(0, MAX_INDEX).getData() - maxmin.getDataAt(0, MIN_INDEX).getData());
 		final GridCellDouble rescaleFactor = new GridCellDouble( diffOld / diffNew );
 		
@@ -128,10 +126,8 @@ public class HeightSubdivisionAlgorithm implements ISubdivisionAlgorithm<Double>
 				gridCell.getData().add(newMinimumInverted);
 				// scale to new max/min
 				gridCell.getData().mult(rescaleFactor);
-				// move to new minimum
-				gridCell.getData().add(oldMinimum);
 			}
-		});
+		});*/
 		
 		return result;
 	}
